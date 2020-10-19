@@ -1,4 +1,4 @@
-<h1>Listing Posts</h1>
+<h1>Home</h1>
 
 <%= if @live_action in [:new] do %>
   <%= live_modal @socket, WatwitterWeb.PostLive.FormComponent,
@@ -11,17 +11,7 @@
 
 <div id="posts">
   <%= for post <- @posts do %>
-    <div id="post-<%= post.id %>">
-      <div><%= post.username %></div>
-      <div><%= post.body %></div>
-      <div><%= post.likes_count %></div>
-      <div><%= post.reposts_count %></div>
-
-      <div>
-        <span><%= live_redirect "Show", to: Routes.post_show_path(@socket, :show, post) %></span>
-        <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: post.id, data: [confirm: "Are you sure?"] %></span>
-      </div>
-    </div>
+    <%= live_component @socket, WatwitterWeb.PostLive.PostComponent, id: post.id, post: post %>
   <% end %>
 </div>
 

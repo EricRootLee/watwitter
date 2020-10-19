@@ -5,8 +5,12 @@ defmodule WatwitterWeb.PostLiveTest do
 
   alias Watwitter.Timeline
 
-  @create_attrs %{body: "some body", likes_count: 42, reposts_count: 42, username: "some username"}
-  @update_attrs %{body: "some updated body", likes_count: 43, reposts_count: 43, username: "some updated username"}
+  @create_attrs %{
+    body: "some body",
+    likes_count: 42,
+    reposts_count: 42,
+    username: "some username"
+  }
   @invalid_attrs %{body: nil, likes_count: nil, reposts_count: nil, username: nil}
 
   defp fixture(:post) do
@@ -51,28 +55,6 @@ defmodule WatwitterWeb.PostLiveTest do
       assert html =~ "some body"
     end
 
-    test "updates post in listing", %{conn: conn, post: post} do
-      {:ok, index_live, _html} = live(conn, Routes.post_index_path(conn, :index))
-
-      assert index_live |> element("#post-#{post.id} a", "Edit") |> render_click() =~
-               "Edit Post"
-
-      assert_patch(index_live, Routes.post_index_path(conn, :edit, post))
-
-      assert index_live
-             |> form("#post-form", post: @invalid_attrs)
-             |> render_change() =~ "can&apos;t be blank"
-
-      {:ok, _, html} =
-        index_live
-        |> form("#post-form", post: @update_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, Routes.post_index_path(conn, :index))
-
-      assert html =~ "Post updated successfully"
-      assert html =~ "some updated body"
-    end
-
     test "deletes post in listing", %{conn: conn, post: post} do
       {:ok, index_live, _html} = live(conn, Routes.post_index_path(conn, :index))
 
@@ -89,28 +71,6 @@ defmodule WatwitterWeb.PostLiveTest do
 
       assert html =~ "Show Post"
       assert html =~ post.body
-    end
-
-    test "updates post within modal", %{conn: conn, post: post} do
-      {:ok, show_live, _html} = live(conn, Routes.post_show_path(conn, :show, post))
-
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Post"
-
-      assert_patch(show_live, Routes.post_show_path(conn, :edit, post))
-
-      assert show_live
-             |> form("#post-form", post: @invalid_attrs)
-             |> render_change() =~ "can&apos;t be blank"
-
-      {:ok, _, html} =
-        show_live
-        |> form("#post-form", post: @update_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, Routes.post_show_path(conn, :show, post))
-
-      assert html =~ "Post updated successfully"
-      assert html =~ "some updated body"
     end
   end
 end

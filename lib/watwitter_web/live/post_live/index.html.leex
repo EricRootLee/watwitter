@@ -9,10 +9,18 @@
     return_to: Routes.post_index_path(@socket, :index) %>
 <% end %>
 
-<div id="posts" phx-update="prepend">
-  <%= for post <- @posts do %>
-    <%= live_component @socket, WatwitterWeb.PostLive.PostComponent, id: post.id, post: post %>
-  <% end %>
-</div>
+<div class="h-screen relative flex flex-col">
+  <div class="flex-1">
+    <div id="posts" phx-update="prepend">
+      <%= for post <- @posts do %>
+        <%= live_component @socket, WatwitterWeb.PostLive.PostComponent, id: post.id, post: post %>
+      <% end %>
+    </div>
+  </div>
 
-<span><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></span>
+  <div class="float-right rounded-lg shadow-lg bg-gray-800 text-white p-4"><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></div>
+
+  <footer class="h-16 border-solid border-2 border-gray-100">
+    <div>Home</div>
+  </footer>
+</div>

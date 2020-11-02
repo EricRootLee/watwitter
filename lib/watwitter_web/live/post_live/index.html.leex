@@ -21,10 +21,9 @@
         <% end %>
       </div>
     </div>
-
-    <div class="float-right rounded-lg shadow-lg bg-gray-800 text-white p-4"><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></div>
   </div>
-</div>
+  <div class="float-right rounded-lg shadow-lg bg-gray-800 text-white p-4"><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></div>
+</main>
 
 <footer class="flex border-t border-gray-200">
   <div class="flex items-center justify-center w-1/4 py-3">

@@ -53,22 +53,8 @@ defmodule WatwitterWeb.PostLiveTest do
     end)
   end
 
-  describe "Show" do
-    test "displays post", %{conn: conn} do
-      post = create(:post)
-
-      {:ok, _view, html} = live(conn, Routes.post_show_path(conn, :show, post))
-
-      assert html =~ "Show Post"
-      assert html =~ post.body
-    end
-  end
-
   defp create(:post) do
-    attrs = %{
-      username: "germsvel",
-      body: "some body"
-    }
+    attrs = %{username: "germsvel", body: "some body"}
 
     {:ok, post} = Timeline.create_post(attrs)
     post

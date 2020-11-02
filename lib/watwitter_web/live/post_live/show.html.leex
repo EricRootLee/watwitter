@@ -1,27 +1,6 @@
-<h1>Show Post</h1>
+<header class="flex items-center px-4 py-3 border-b">
+  <%= live_redirect "< Back", to: Routes.post_index_path(@socket, :index) %>
+  <p class="ml-6 text-lg font-extrabold">Watweet</p>
+</header>
 
-<ul>
-
-  <li>
-    <strong>Username:</strong>
-    <%= @post.username %>
-  </li>
-
-  <li>
-    <strong>Body:</strong>
-    <%= @post.body %>
-  </li>
-
-  <li>
-    <strong>Likes count:</strong>
-    <%= @post.likes_count %>
-  </li>
-
-  <li>
-    <strong>Reposts count:</strong>
-    <%= @post.reposts_count %>
-  </li>
-
-</ul>
-
-<span><%= live_redirect "Back", to: Routes.post_index_path(@socket, :index) %></span>
+<%= live_component @socket, WatwitterWeb.PostLive.PostComponent, id: @post.id, post: @post %>

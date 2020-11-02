@@ -24,6 +24,33 @@ defmodule WatwitterWeb.PostLiveTest do
 
       assert has_element?(view, "#post-form")
     end
+
+    test "user receives new tweets in timeline", %{conn: conn} do
+      {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
+      first_post = %{username: "germsvel", body: "most excellent post"}
+      second_post = %{username: "gandalf", body: "truly cool"}
+      posts = [first_post, second_post]
+
+      ensure_posts_absent(view, posts)
+
+      Timeline.create_post(first_post)
+      assert has_post(view, first_post)
+
+      Timeline.create_post(second_post)
+      assert has_post(view, second_post)
+    end
+  end
+
+  defp has_post(view, post) do
+    assert has_element?(view, "#posts", post.username)
+    assert has_element?(view, "#posts", post.body)
+  end
+
+  defp ensure_posts_absent(view, posts) do
+    Enum.each(posts, fn post ->
+      refute has_element?(view, "#posts", post.username)
+      refute has_element?(view, "#posts", post.body)
+    end)
   end
 
   describe "Show" do

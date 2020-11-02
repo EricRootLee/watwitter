@@ -21,6 +21,16 @@ defmodule Watwitter.Timeline do
     Repo.all(from p in Post, order_by: [desc: p.id])
   end
 
+  @per_page 10
+  def list_posts(page: page) do
+    Repo.all(
+      from p in Post,
+        offset: ^((page - 1) * @per_page),
+        limit: @per_page,
+        order_by: [desc: p.id]
+    )
+  end
+
   @doc """
   Gets a single post.
 

@@ -6,7 +6,7 @@ defmodule WatwitterWeb.PostLiveTest do
   alias Watwitter.Timeline
 
   describe "Index" do
-    test "lists all posts", %{conn: conn} do
+    test "lists posts", %{conn: conn} do
       post = create(:post)
 
       {:ok, _view, html} = live(conn, Routes.post_index_path(conn, :index))
@@ -34,14 +34,32 @@ defmodule WatwitterWeb.PostLiveTest do
       ensure_posts_absent(view, posts)
 
       Timeline.create_post(first_post)
-      assert has_post(view, first_post)
+      assert_has_post(view, first_post)
 
       Timeline.create_post(second_post)
-      assert has_post(view, second_post)
+      assert_has_post(view, second_post)
+    end
+
+    test "load more hook fetches more posts (10 per page)", %{conn: conn} do
+      [first, second | _] = create_list(:post, 12)
+      {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
+
+      view
+      |> element("#load-more")
+      |> render_hook("load-more")
+
+      assert has_element?(view, post_card(second), second.username)
+      assert has_element?(view, post_card(second), second.body)
+      assert has_element?(view, post_card(first), first.username)
+      assert has_element?(view, post_card(first), first.body)
     end
   end
 
-  defp has_post(view, post) do
+  defp post_card(post) do
+    "#post-#{post.id}"
+  end
+
+  defp assert_has_post(view, post) do
     assert has_element?(view, "#posts", post.username)
     assert has_element?(view, "#posts", post.body)
   end
@@ -53,9 +71,15 @@ defmodule WatwitterWeb.PostLiveTest do
     end)
   end
 
-  defp create(:post) do
-    attrs = %{username: "germsvel", body: "some body"}
+  defp create_list(:post, count) do
+    1..count
+    |> Enum.map(fn i ->
+      create(:post, %{username: "germsvel#{i}", body: "This is watweet #{i}"})
+    end)
+  end
 
+  @default_attrs %{username: "germsvel", body: "some body"}
+  defp create(:post, attrs \\ @default_attrs) do
     {:ok, post} = Timeline.create_post(attrs)
     post
   end

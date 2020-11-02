@@ -23,6 +23,9 @@
     </div>
   </div>
   <div class="float-right rounded-lg shadow-lg bg-gray-800 text-white p-4"><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></div>
+  <div id="load-more" phx-hook="InfiniteScrollLoader">
+    Loading ...
+  </div>
 </main>
 
 <footer class="flex border-t border-gray-200">

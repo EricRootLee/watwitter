@@ -7,7 +7,8 @@ defmodule WatwitterWeb.PostLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: Timeline.subscribe()
-    {:ok, assign(socket, :posts, list_posts()), temporary_assigns: [posts: []]}
+    posts = Timeline.list_posts(page: 1)
+    {:ok, assign(socket, posts: posts, page: 1), temporary_assigns: [posts: []]}
   end
 
   @impl true
@@ -28,11 +29,11 @@ defmodule WatwitterWeb.PostLive.Index do
   end
 
   @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    post = Timeline.get_post!(id)
-    {:ok, _} = Timeline.delete_post(post)
+  def handle_event("load-more", _, socket) do
+    new_page = socket.assigns.page + 1
+    posts = Timeline.list_posts(page: new_page)
 
-    {:noreply, assign(socket, :posts, list_posts())}
+    {:noreply, assign(socket, posts: posts, page: new_page)}
   end
 
   @impl true
@@ -42,9 +43,5 @@ defmodule WatwitterWeb.PostLive.Index do
 
   def handle_info({:post_updated, post}, socket) do
     {:noreply, update(socket, :posts, fn posts -> [post | posts] end)}
-  end
-
-  defp list_posts do
-    Timeline.list_posts()
   end
 end

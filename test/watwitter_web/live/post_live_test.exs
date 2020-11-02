@@ -14,6 +14,16 @@ defmodule WatwitterWeb.PostLiveTest do
       assert html =~ "Listing Posts"
       assert html =~ post.body
     end
+
+    test "user can compose new tweet from timeline", %{conn: conn} do
+      {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
+
+      view
+      |> element("a", "New Post")
+      |> render_click()
+
+      assert has_element?(view, "#post-form")
+    end
   end
 
   describe "Show" do

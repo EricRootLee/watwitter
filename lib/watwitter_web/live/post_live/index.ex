@@ -8,7 +8,8 @@ defmodule WatwitterWeb.PostLive.Index do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Timeline.subscribe()
     posts = Timeline.list_posts(page: 1)
-    {:ok, assign(socket, posts: posts, page: 1), temporary_assigns: [posts: []]}
+    socket = assign(socket, posts: posts, new_posts: [], page: 1, new_posts_count: 0)
+    {:ok, socket, temporary_assigns: [posts: [], new_posts: []]}
   end
 
   @impl true
@@ -36,9 +37,18 @@ defmodule WatwitterWeb.PostLive.Index do
     {:noreply, assign(socket, posts: posts, page: new_page)}
   end
 
+  def handle_event("show-new-posts", _, socket) do
+    {:noreply, assign(socket, new_posts_count: 0)}
+  end
+
   @impl true
   def handle_info({:post_created, post}, socket) do
-    {:noreply, update(socket, :posts, fn posts -> [post | posts] end)}
+    socket =
+      socket
+      |> update(:new_posts_count, fn count -> count + 1 end)
+      |> update(:new_posts, fn posts -> [post | posts] end)
+
+    {:noreply, socket}
   end
 
   def handle_info({:post_updated, post}, socket) do

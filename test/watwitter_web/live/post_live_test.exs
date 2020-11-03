@@ -25,19 +25,27 @@ defmodule WatwitterWeb.PostLiveTest do
       assert has_element?(view, "#post-form")
     end
 
-    test "user receives new tweets in timeline", %{conn: conn} do
+    test "user receives notice of new tweets in timeline", %{conn: conn} do
+      create_list(:post, 5)
       {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
-      first_post = %{username: "germsvel", body: "most excellent post"}
+      first_post = %{username: "aragorn", body: "most excellent post"}
       second_post = %{username: "gandalf", body: "truly cool"}
       posts = [first_post, second_post]
 
       ensure_posts_absent(view, posts)
 
       Timeline.create_post(first_post)
-      assert_has_post(view, first_post)
+      assert has_element?(view, "#new-posts-notice", "1")
 
       Timeline.create_post(second_post)
-      assert_has_post(view, second_post)
+      assert has_element?(view, "#new-posts-notice", "2")
+
+      view
+      |> element("#new-posts-notice", "Show 2 posts")
+      |> render_click()
+
+      assert_has_new_post(view, first_post)
+      assert_has_new_post(view, second_post)
     end
 
     test "load more hook fetches more posts (10 per page)", %{conn: conn} do
@@ -59,9 +67,9 @@ defmodule WatwitterWeb.PostLiveTest do
     "#post-#{post.id}"
   end
 
-  defp assert_has_post(view, post) do
-    assert has_element?(view, "#posts", post.username)
-    assert has_element?(view, "#posts", post.body)
+  defp assert_has_new_post(view, post) do
+    assert has_element?(view, "#new-posts", post.username)
+    assert has_element?(view, "#new-posts", post.body)
   end
 
   defp ensure_posts_absent(view, posts) do

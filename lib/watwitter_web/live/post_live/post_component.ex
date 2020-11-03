@@ -9,17 +9,17 @@ defmodule WatwitterWeb.PostLive.PostComponent do
 
         <div class="flex flex-col flex-1 min-w-0">
           <p class="flex text-sm">
-            <span class="truncate text-cool-gray-500">
-              <span class="font-bold text-cool-gray-900">
+            <span class="truncate text-gray-500">
+              <span class="font-bold text-gray-900">
                 German Velasco
               </span>
-              <span class="pl-1 text-cool-gray-500">
+              <span class="pl-1 text-gray-500">
                 @<%= @post.username %>
               </span>
             </span>
             <span class="flex-shrink-0">
-              <span class="px-1 text-cool-gray-500">·</span>
-              <span class="text-cool-gray-500">
+              <span class="px-1 text-gray-500">·</span>
+              <span class="text-gray-500">
                 Mar 23
               </span>
             </span>
@@ -27,8 +27,8 @@ defmodule WatwitterWeb.PostLive.PostComponent do
 
           <div class="text-sm"><%= live_redirect @post.body, to: Routes.post_show_path(@socket, :show, @post) %></div>
 
-          <div class="flex justify-between mt-2 text-cool-gray-500">
-            <a href="#">
+          <div class="flex justify-between mt-2 text-gray-500">
+            <a class="flex" href="#">
               <svg viewBox="0 0 24 24" class="w-5 h-5 p-px fill-current">
                 <g>
                   <path d="M14.046 2.242l-4.148-.01h-.002c-4.374 0-7.8 3.427-7.8 7.802 0 4.098 3.186 7.206 7.465 7.37v3.828c0 .108.044.286.12.403.142.225.384.347.632.347.138 0 .277-.038.402-.118.264-.168 6.473-4.14 8.088-5.506 1.902-1.61 3.04-3.97 3.043-6.312v-.017c-.006-4.367-3.43-7.787-7.8-7.788zm3.787 12.972c-1.134.96-4.862 3.405-6.772 4.643V16.67c0-.414-.335-.75-.75-.75h-.396c-3.66 0-6.318-2.476-6.318-5.886 0-3.534 2.768-6.302 6.3-6.302l4.147.01h.002c3.532 0 6.3 2.766 6.302 6.296-.003 1.91-.942 3.844-2.514 5.176z"></path>
@@ -51,7 +51,7 @@ defmodule WatwitterWeb.PostLive.PostComponent do
               </svg>
               <span data-role="like-count" class="text-sm p-px"><%= @post.likes_count %></span>
             </a>
-            <a href="#">
+            <a class="flex" href="#">
               <svg viewBox="0 0 24 24" class="w-5 h-5 p-px fill-current">
                 <g>
                   <path d="M17.53 7.47l-5-5c-.293-.293-.768-.293-1.06 0l-5 5c-.294.293-.294.768 0 1.06s.767.294 1.06 0l3.72-3.72V15c0 .414.336.75.75.75s.75-.336.75-.75V4.81l3.72 3.72c.146.147.338.22.53.22s.384-.072.53-.22c.293-.293.293-.767 0-1.06z"></path>

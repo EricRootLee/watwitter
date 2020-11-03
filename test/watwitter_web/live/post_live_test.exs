@@ -19,7 +19,7 @@ defmodule WatwitterWeb.PostLiveTest do
       {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
 
       view
-      |> element("a", "New Post")
+      |> element("a")
       |> render_click()
 
       assert has_element?(view, "#post-form")

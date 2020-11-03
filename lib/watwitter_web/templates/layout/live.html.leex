@@ -1,4 +1,4 @@
-<main role="main" class="container">
+<main role="main">
   <p class="alert alert-info" role="alert"
     phx-click="lv:clear-flash"
     phx-value-key="info"><%= live_flash(@flash, :info) %></p>
@@ -7,5 +7,9 @@
     phx-click="lv:clear-flash"
     phx-value-key="error"><%= live_flash(@flash, :error) %></p>
 
-  <%= @inner_content %>
+  <div class="flex flex-col items-center justify-center w-screen h-screen mx-auto text-base text-gray-900 bg-gray-200 xs:py-8">
+    <div class="relative flex flex-col flex-1 w-full overflow-hidden bg-white shadow max-w-lg xs:max-w-sm my-10">
+      <%= @inner_content %>
+    </div>
+  </div>
 </main>

@@ -13,14 +13,10 @@
       return_to: Routes.post_index_path(@socket, :index) %>
   <% end %>
 
-  <div>
-    <div class="flex-1">
-      <div id="posts" phx-update="prepend">
-        <%= for post <- @posts do %>
-          <%= live_component @socket, WatwitterWeb.PostLive.PostComponent, id: post.id, post: post %>
-        <% end %>
-      </div>
-    </div>
+  <div id="posts" phx-update="prepend">
+    <%= for post <- @posts do %>
+      <%= live_component @socket, WatwitterWeb.PostLive.PostComponent, id: post.id, post: post %>
+    <% end %>
   </div>
   <div class="float-right rounded-lg shadow-lg bg-gray-800 text-white p-4"><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></div>
   <div id="load-more" phx-hook="InfiniteScrollLoader">

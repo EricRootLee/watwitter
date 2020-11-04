@@ -27,7 +27,7 @@ defmodule WatwitterWeb.PostLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Posts")
+    |> assign(:page_title, "Home")
     |> assign(:post, nil)
   end
 
@@ -40,7 +40,8 @@ defmodule WatwitterWeb.PostLive.Index do
   end
 
   def handle_event("show-new-posts", _, socket) do
-    {:noreply, assign(socket, new_posts_count: 0)}
+    socket = assign(socket, new_posts_count: 0, page_title: "Home")
+    {:noreply, socket}
   end
 
   @impl true
@@ -49,11 +50,16 @@ defmodule WatwitterWeb.PostLive.Index do
       socket
       |> update(:new_posts_count, fn count -> count + 1 end)
       |> update(:new_posts, fn posts -> [post | posts] end)
+      |> set_new_tweets_page_title()
 
     {:noreply, socket}
   end
 
   def handle_info({:post_updated, post}, socket) do
     {:noreply, update(socket, :posts, fn posts -> [post | posts] end)}
+  end
+
+  defp set_new_tweets_page_title(socket) do
+    assign(socket, :page_title, "(#{socket.assigns.new_posts_count}) Home")
   end
 end

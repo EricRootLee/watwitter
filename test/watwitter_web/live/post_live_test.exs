@@ -11,7 +11,7 @@ defmodule WatwitterWeb.PostLiveTest do
 
       {:ok, _view, html} = live(conn, Routes.post_index_path(conn, :index))
 
-      assert html =~ "Listing Posts"
+      assert html =~ "Home"
       assert html =~ post.body
     end
 
@@ -46,6 +46,20 @@ defmodule WatwitterWeb.PostLiveTest do
 
       assert_has_new_post(view, first_post)
       assert_has_new_post(view, second_post)
+      assert page_title(view) =~ "Home"
+    end
+
+    test "page title reflects number of new tweets", %{conn: conn} do
+      {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
+      first_post = %{username: "aragorn", body: "most excellent post"}
+      second_post = %{username: "gandalf", body: "truly cool"}
+
+      Timeline.create_post(first_post)
+      Timeline.create_post(second_post)
+
+      render(view)
+
+      assert page_title(view) =~ "(2) Home"
     end
 
     test "load more hook fetches more posts (10 per page)", %{conn: conn} do

@@ -8,7 +8,7 @@ defmodule WatwitterWeb.PostLive.New do
     socket =
       socket
       |> assign(:post, %Post{})
-      |> assign(:page_title, "New Post")
+      |> assign(:page_title, "Compose Watweet")
 
     {:ok, socket}
   end

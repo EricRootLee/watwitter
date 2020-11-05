@@ -3,4 +3,6 @@
   <p class="ml-6 text-lg font-extrabold">Watweet</p>
 </header>
 
-<%= live_component @socket, WatwitterWeb.PostLive.PostComponent, id: @post.id, post: @post %>
+<div class="flex-1 overflow-scroll">
+  <%= live_component @socket, WatwitterWeb.PostLive.PostComponent, id: @post.id, post: @post %>
+</div>

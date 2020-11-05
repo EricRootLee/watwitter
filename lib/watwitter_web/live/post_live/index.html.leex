@@ -20,9 +20,9 @@
     </div>
   <% end %>
 
-  <%= if @new_posts do %>
-    <div id="new-posts" phx-update="prepend">
-      <%= for post <- @new_posts do %>
+  <%= if Enum.any?(@recent_posts) do %>
+    <div id="recent-posts" phx-update="prepend">
+      <%= for post <- @recent_posts do %>
         <%= live_component @socket, WatwitterWeb.PostLive.PostComponent, id: post.id, post: post %>
       <% end %>
     </div>

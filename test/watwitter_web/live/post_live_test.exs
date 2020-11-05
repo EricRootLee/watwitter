@@ -38,17 +38,31 @@ defmodule WatwitterWeb.PostLiveTest do
       ensure_posts_absent(view, posts)
 
       Timeline.create_post(first_post)
-      assert has_element?(view, "#new-posts-notice", "1")
-
       Timeline.create_post(second_post)
+
       assert has_element?(view, "#new-posts-notice", "2")
+      refute post_visible?(view, first_post)
+      refute post_visible?(view, second_post)
+    end
+
+    test "clicking on new posts notice displays new posts", %{conn: conn} do
+      create_list(:post, 5)
+      {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
+      first_post = %{username: "aragorn", body: "most excellent post"}
+      second_post = %{username: "gandalf", body: "truly cool"}
+      posts = [first_post, second_post]
+
+      ensure_posts_absent(view, posts)
+
+      Timeline.create_post(first_post)
+      Timeline.create_post(second_post)
 
       view
       |> element("#new-posts-notice", "Show 2 posts")
       |> render_click()
 
-      assert_has_new_post(view, first_post)
-      assert_has_new_post(view, second_post)
+      assert post_visible?(view, first_post)
+      assert post_visible?(view, second_post)
       assert page_title(view) =~ "Home"
     end
 
@@ -84,9 +98,9 @@ defmodule WatwitterWeb.PostLiveTest do
     "#post-#{post.id}"
   end
 
-  defp assert_has_new_post(view, post) do
-    assert has_element?(view, "#new-posts", post.username)
-    assert has_element?(view, "#new-posts", post.body)
+  defp post_visible?(view, post) do
+    has_element?(view, "main", post.username) &&
+      has_element?(view, "main", post.body)
   end
 
   defp ensure_posts_absent(view, posts) do

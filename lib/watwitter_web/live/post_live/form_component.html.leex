@@ -5,12 +5,12 @@
   phx_submit: "save" %>
 
   <span>
-    <%= text_input f, :username, placeholder: "username" %>
+    <%= text_input f, :username, placeholder: "username", class: "p-3 w-full" %>
     <%= error_tag f, :username %>
   </span>
 
   <span class="border-b-2 border-gray-300">
-    <%= textarea f, :body, placeholder: "What's happening?", class: "p-3 border-none" %>
+    <%= textarea f, :body, placeholder: "What's happening?", class: "p-3 w-full" %>
     <%= error_tag f, :body %>
   </span>
 

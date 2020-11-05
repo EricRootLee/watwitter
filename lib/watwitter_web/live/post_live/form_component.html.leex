@@ -4,13 +4,17 @@
   phx_change: "validate",
   phx_submit: "save" %>
 
-  <%= label f, :username %>
-  <%= text_input f, :username %>
-  <%= error_tag f, :username %>
+  <span>
+    <%= text_input f, :username, placeholder: "username" %>
+    <%= error_tag f, :username %>
+  </span>
 
-  <%= label f, :body %>
-  <%= textarea f, :body %>
-  <%= error_tag f, :body %>
+  <span class="border-b-2 border-gray-300">
+    <%= textarea f, :body, placeholder: "What's happening?", class: "p-3 border-none" %>
+    <%= error_tag f, :body %>
+  </span>
 
-  <%= submit "Save", phx_disable_with: "Saving..." %>
+  <div class="mt-4 flex flex-row-reverse">
+    <%= submit "Post", phx_disable_with: "Posting...", class: "px-4 py-2 h-8 rounded-full flex items-center justify-center bg-blue-500 text-white" %>
+  </div>
 </form>

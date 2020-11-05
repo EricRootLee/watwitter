@@ -2,7 +2,14 @@
   <%= live_redirect "< Back", to: Routes.post_index_path(@socket, :index) %>
 </header>
 
-<%= live_component @socket, WatwitterWeb.PostLive.FormComponent,
-  id: :new,
-  post: @post,
-  return_to: Routes.post_index_path(@socket, :index) %>
+<div class="px-3 mt-3 overflow-scroll flex flex-1">
+  <div class="mr-4">
+    <img class="rounded-full w-10 h-10" src="http://twivatar.glitch.me/germsvel">
+  </div>
+  <div class="flex-1">
+    <%= live_component @socket, WatwitterWeb.PostLive.FormComponent,
+      id: :new,
+      post: @post,
+      return_to: Routes.post_index_path(@socket, :index) %>
+  </div>
+</div>

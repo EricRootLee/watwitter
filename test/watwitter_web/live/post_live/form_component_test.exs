@@ -17,11 +17,7 @@ defmodule WatwitterWeb.PostLive.FormComponentTest do
   @attrs_251_chars %{username: "germsvel", body: @two_fifty_one}
 
   test "does not allow blank posts", %{conn: conn} do
-    {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
-
-    view
-    |> element("a")
-    |> render_click()
+    {:ok, view, _html} = live(conn, Routes.post_new_path(conn, :new))
 
     rendered =
       view
@@ -32,11 +28,7 @@ defmodule WatwitterWeb.PostLive.FormComponentTest do
   end
 
   test "does not allow posts with more than 250 characters", %{conn: conn} do
-    {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
-
-    view
-    |> element("a")
-    |> render_click()
+    {:ok, view, _html} = live(conn, Routes.post_new_path(conn, :new))
 
     rendered =
       view
@@ -47,11 +39,7 @@ defmodule WatwitterWeb.PostLive.FormComponentTest do
   end
 
   test "saves new post", %{conn: conn} do
-    {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
-
-    view
-    |> element("a")
-    |> render_click()
+    {:ok, view, _html} = live(conn, Routes.post_new_path(conn, :new))
 
     {:ok, _, html} =
       view

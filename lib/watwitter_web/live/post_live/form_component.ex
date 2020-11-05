@@ -24,23 +24,6 @@ defmodule WatwitterWeb.PostLive.FormComponent do
   end
 
   def handle_event("save", %{"post" => post_params}, socket) do
-    save_post(socket, socket.assigns.action, post_params)
-  end
-
-  defp save_post(socket, :edit, post_params) do
-    case Timeline.update_post(socket.assigns.post, post_params) do
-      {:ok, _post} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Post updated successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
-    end
-  end
-
-  defp save_post(socket, :new, post_params) do
     case Timeline.create_post(post_params) do
       {:ok, _post} ->
         {:noreply,

@@ -18,7 +18,7 @@ defmodule WatwitterWeb.Router do
     pipe_through :browser
 
     live "/", PostLive.Index, :index
-    live "/posts/new", PostLive.Index, :new
+    live "/posts/new", PostLive.New, :new
 
     live "/posts/:id", PostLive.Show, :show
   end

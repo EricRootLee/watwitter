@@ -18,11 +18,14 @@ defmodule WatwitterWeb.PostLiveTest do
     test "user can compose new tweet from timeline", %{conn: conn} do
       {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
 
-      view
-      |> element("a")
-      |> render_click()
+      {:ok, _, html} =
+        view
+        |> element("a")
+        |> render_click()
+        |> follow_redirect(conn, Routes.post_new_path(conn, :new))
 
-      assert has_element?(view, "#post-form")
+      assert html =~ "Compose"
+      assert html =~ "post-form"
     end
 
     test "user receives notice of new tweets in timeline", %{conn: conn} do

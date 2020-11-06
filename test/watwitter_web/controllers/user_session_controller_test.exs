@@ -11,8 +11,7 @@ defmodule WatwitterWeb.UserSessionControllerTest do
     test "renders log in page", %{conn: conn} do
       conn = get(conn, Routes.user_session_path(conn, :new))
       response = html_response(conn, 200)
-      assert response =~ "<h1>Log in</h1>"
-      assert response =~ "Log in</a>"
+      assert response =~ "Log in"
       assert response =~ "Register</a>"
     end
 
@@ -32,12 +31,11 @@ defmodule WatwitterWeb.UserSessionControllerTest do
       assert get_session(conn, :user_token)
       assert redirected_to(conn) =~ "/"
 
-      # Now do a logged in request and assert on the menu
+      # Now do a logged in request
       conn = get(conn, "/")
       response = html_response(conn, 200)
-      assert response =~ user.email
-      assert response =~ "Settings</a>"
-      assert response =~ "Log out</a>"
+      assert response =~ "Watwitter"
+      assert response =~ "Home"
     end
 
     test "logs the user in with remember me", %{conn: conn, user: user} do
@@ -61,7 +59,7 @@ defmodule WatwitterWeb.UserSessionControllerTest do
         })
 
       response = html_response(conn, 200)
-      assert response =~ "<h1>Log in</h1>"
+      assert response =~ "Log in"
       assert response =~ "Invalid email or password"
     end
   end

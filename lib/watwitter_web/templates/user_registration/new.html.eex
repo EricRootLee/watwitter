@@ -1,0 +1,48 @@
+<main class="max-w-lg mx-auto pt-10 pb-12 px-4 lg:pb-16">
+  <div class="space-y-6">
+    <div class="space-y-1">
+      <h1 class="text-2xl py-6 leading-6 font-medium text-gray-900">
+        Register
+      </h1>
+    </div>
+  </div>
+
+  <div class="max-w-3xl mx-auto">
+    <%= form_for @changeset, Routes.user_registration_path(@conn, :create), fn f -> %>
+      <%= if @changeset.action do %>
+        <div class="alert alert-danger">
+          <p>Oops, something went wrong! Please check the errors below.</p>
+        </div>
+      <% end %>
+
+      <div class="space-y-6">
+        <div class="space-y-1">
+          <%= label f, :email, class: "block text-sm font-medium leading-5 text-gray-700" %>
+          <div class="rounded-md shadow-sm">
+            <%= email_input f, :email, required: true, class: "form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5" %>
+            <%= error_tag f, :email %>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <%= label f, :password, class: "block text-sm font-medium leading-5 text-gray-700" %>
+          <div class="rounded-md shadow-sm">
+            <%= password_input f, :password, required: true, class: "form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5" %>
+            <%= error_tag f, :password %>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <span class="ml-3 inline-flex rounded-md shadow-sm">
+            <%= submit "Register", class: "inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-500 hover:bg-blue-400 focus:outline-none focus:border-blue-600 focus:shadow-outline-blue active:bg-blue-600 transition duration-150 ease-in-out" %>
+          </span>
+        </div>
+      </div>
+    <% end %>
+
+    <p>
+      <%= link "Log in", to: Routes.user_session_path(@conn, :new) %> |
+      <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>
+    </p>
+  </div>
+</main>

@@ -16,6 +16,8 @@ defmodule WatwitterWeb.PostLive.FormComponentTest do
   """
   @attrs_251_chars %{username: "germsvel", body: @two_fifty_one}
 
+  setup :register_and_log_in_user
+
   test "does not allow blank posts", %{conn: conn} do
     {:ok, view, _html} = live(conn, Routes.post_new_path(conn, :new))
 

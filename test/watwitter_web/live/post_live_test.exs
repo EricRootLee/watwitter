@@ -5,6 +5,8 @@ defmodule WatwitterWeb.PostLiveTest do
 
   alias Watwitter.Timeline
 
+  setup :register_and_log_in_user
+
   describe "Index" do
     test "lists posts", %{conn: conn} do
       post = create(:post)
@@ -118,8 +120,9 @@ defmodule WatwitterWeb.PostLiveTest do
   end
 
   @default_attrs %{username: "germsvel", body: "some body"}
-  defp create(:post, attrs \\ @default_attrs) do
-    {:ok, post} = Timeline.create_post(attrs)
+  defp create(:post, attrs \\ %{}) do
+    post_attrs = Map.merge(attrs, @default_attrs)
+    {:ok, post} = Timeline.create_post(post_attrs)
     post
   end
 end

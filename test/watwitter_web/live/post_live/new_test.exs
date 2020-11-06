@@ -3,6 +3,8 @@ defmodule WatwitterWeb.PostLive.NewTest do
 
   import Phoenix.LiveViewTest
 
+  setup :register_and_log_in_user
+
   test "page_title is set", %{conn: conn} do
     {:ok, _, html} = live(conn, Routes.post_new_path(conn, :new))
 

@@ -5,6 +5,8 @@ defmodule WatwitterWeb.PostLive.ShowTest do
 
   alias Watwitter.Timeline
 
+  setup :register_and_log_in_user
+
   test "displays post", %{conn: conn} do
     post = create(:post)
 

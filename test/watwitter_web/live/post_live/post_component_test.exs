@@ -5,6 +5,8 @@ defmodule WatwitterWeb.PostLive.PostComponentTest do
 
   alias Watwitter.Timeline
 
+  setup :register_and_log_in_user
+
   describe "likes" do
     test "users can like a post", %{conn: conn} do
       post = create(:post)

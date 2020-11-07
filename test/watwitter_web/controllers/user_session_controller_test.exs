@@ -1,10 +1,10 @@
 defmodule WatwitterWeb.UserSessionControllerTest do
   use WatwitterWeb.ConnCase, async: true
 
-  import Watwitter.AccountsFixtures
+  import Watwitter.Factory
 
   setup do
-    %{user: user_fixture()}
+    %{user: params_for(:user) |> register_user()}
   end
 
   describe "GET /users/log_in" do
@@ -22,10 +22,13 @@ defmodule WatwitterWeb.UserSessionControllerTest do
   end
 
   describe "POST /users/log_in" do
-    test "logs the user in", %{conn: conn, user: user} do
+    test "logs the user in", %{conn: conn} do
+      user_params = params_for(:user)
+      register_user(user_params)
+
       conn =
         post(conn, Routes.user_session_path(conn, :create), %{
-          "user" => %{"email" => user.email, "password" => valid_user_password()}
+          "user" => %{"email" => user_params.email, "password" => user_params.password}
         })
 
       assert get_session(conn, :user_token)
@@ -38,12 +41,15 @@ defmodule WatwitterWeb.UserSessionControllerTest do
       assert response =~ "Home"
     end
 
-    test "logs the user in with remember me", %{conn: conn, user: user} do
+    test "logs the user in with remember me", %{conn: conn} do
+      user_params = params_for(:user)
+      register_user(user_params)
+
       conn =
         post(conn, Routes.user_session_path(conn, :create), %{
           "user" => %{
-            "email" => user.email,
-            "password" => valid_user_password(),
+            "email" => user_params.email,
+            "password" => user_params.password,
             "remember_me" => "true"
           }
         })

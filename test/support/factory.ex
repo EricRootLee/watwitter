@@ -6,6 +6,8 @@ defmodule Watwitter.Factory do
   def user_factory do
     %User{
       email: sequence(:email, &"user#{&1}@example.com"),
+      name: sequence("Bilbo Baggins"),
+      username: sequence("bilbo"),
       password: "hello world!"
     }
   end

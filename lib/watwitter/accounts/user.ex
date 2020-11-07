@@ -6,6 +6,8 @@ defmodule Watwitter.Accounts.User do
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true
+    field :name, :string
+    field :username, :string
     field :hashed_password, :string
     field :confirmed_at, :naive_datetime
 
@@ -22,7 +24,8 @@ defmodule Watwitter.Accounts.User do
   """
   def registration_changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:email, :password, :name, :username])
+    |> validate_required([:name, :username])
     |> validate_email()
     |> validate_password()
   end

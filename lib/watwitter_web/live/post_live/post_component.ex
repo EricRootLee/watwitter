@@ -20,7 +20,7 @@ defmodule WatwitterWeb.PostLive.PostComponent do
             <span class="flex-shrink-0">
               <span class="px-1 text-gray-500">·</span>
               <span class="text-gray-500">
-                <%= @post.inserted_at %>
+                <%= format_date(@post.inserted_at) %>
               </span>
             </span>
           </p>
@@ -65,6 +65,23 @@ defmodule WatwitterWeb.PostLive.PostComponent do
     </div>
     """
   end
+
+  defp format_date(datetime) do
+    "#{format_month(datetime.month)} #{datetime.day}"
+  end
+
+  defp format_month(1), do: "Jan"
+  defp format_month(2), do: "Feb"
+  defp format_month(3), do: "Mar"
+  defp format_month(4), do: "Apr"
+  defp format_month(5), do: "May"
+  defp format_month(6), do: "June"
+  defp format_month(7), do: "July"
+  defp format_month(8), do: "Aug"
+  defp format_month(9), do: "Sept"
+  defp format_month(10), do: "Oct"
+  defp format_month(11), do: "Nov"
+  defp format_month(12), do: "Dec"
 
   def handle_event("like", _, socket) do
     Watwitter.Timeline.inc_likes(socket.assigns.post)

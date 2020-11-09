@@ -1,18 +1,33 @@
 defmodule Watwitter.Factory do
   use ExMachina.Ecto, repo: Watwitter.Repo
 
-  alias Watwitter.{Accounts.User, Repo}
+  alias Watwitter.{Accounts.User, Repo, Timeline.Post}
 
-  def user_factory do
-    %User{
-      email: sequence(:email, &"user#{&1}@example.com"),
-      name: sequence("Bilbo Baggins"),
-      username: sequence("bilbo"),
-      password: "hello world!"
+  def post_factory do
+    %Post{
+      body: "This is a most wonderful watweet",
+      user: build(:user)
     }
   end
 
+  def valid_user_password, do: "hello world!"
+
+  def user_factory do
+    changes = %{
+      email: sequence(:email, &"user#{&1}@example.com"),
+      name: sequence("Bilbo Baggins"),
+      username: sequence("bilbo"),
+      password: valid_user_password()
+    }
+
+    %User{}
+    |> User.registration_changeset(changes)
+    |> Ecto.Changeset.apply_changes()
+  end
+
   def register_user(attrs) do
+    attrs = Map.put(attrs, :password, valid_user_password())
+
     {:ok, user} =
       %User{}
       |> User.registration_changeset(attrs)

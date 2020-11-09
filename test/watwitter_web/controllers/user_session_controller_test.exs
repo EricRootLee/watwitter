@@ -4,7 +4,7 @@ defmodule WatwitterWeb.UserSessionControllerTest do
   import Watwitter.Factory
 
   setup do
-    %{user: params_for(:user) |> register_user()}
+    %{user: insert(:user)}
   end
 
   describe "GET /users/log_in" do
@@ -23,12 +23,11 @@ defmodule WatwitterWeb.UserSessionControllerTest do
 
   describe "POST /users/log_in" do
     test "logs the user in", %{conn: conn} do
-      user_params = params_for(:user)
-      register_user(user_params)
+      user = insert(:user)
 
       conn =
         post(conn, Routes.user_session_path(conn, :create), %{
-          "user" => %{"email" => user_params.email, "password" => user_params.password}
+          "user" => %{"email" => user.email, "password" => valid_user_password()}
         })
 
       assert get_session(conn, :user_token)
@@ -42,14 +41,13 @@ defmodule WatwitterWeb.UserSessionControllerTest do
     end
 
     test "logs the user in with remember me", %{conn: conn} do
-      user_params = params_for(:user)
-      register_user(user_params)
+      user = insert(:user)
 
       conn =
         post(conn, Routes.user_session_path(conn, :create), %{
           "user" => %{
-            "email" => user_params.email,
-            "password" => user_params.password,
+            "email" => user.email,
+            "password" => valid_user_password(),
             "remember_me" => "true"
           }
         })

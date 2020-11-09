@@ -24,7 +24,10 @@ defmodule WatwitterWeb.PostLive.FormComponent do
   end
 
   def handle_event("save", %{"post" => post_params}, socket) do
-    case Timeline.create_post(post_params) do
+    %{current_user: current_user} = socket.assigns
+    params = Map.put(post_params, "user_id", current_user.id)
+
+    case Timeline.create_post(params) do
       {:ok, _post} ->
         {:noreply,
          socket

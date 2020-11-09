@@ -23,15 +23,15 @@ defmodule Watwitter.AccountsTest do
     end
 
     test "does not return the user if the password is not valid" do
-      user = params_for(:user) |> register_user()
+      user = insert(:user)
       refute Accounts.get_user_by_email_and_password(user.email, "invalid")
     end
 
     test "returns the user if the email and password are valid" do
-      params = params_for(:user)
-      %{id: id} = user = register_user(params)
+      %{id: id} = user = insert(:user)
 
-      assert %User{id: ^id} = Accounts.get_user_by_email_and_password(user.email, params.password)
+      assert %User{id: ^id} =
+               Accounts.get_user_by_email_and_password(user.email, valid_user_password())
     end
   end
 
@@ -85,7 +85,7 @@ defmodule Watwitter.AccountsTest do
     end
 
     test "registers users with a hashed password" do
-      params = params_for(:user)
+      params = params_for(:user, password: valid_user_password())
       email = params.email
       {:ok, user} = Accounts.register_user(params)
       assert user.email == email
@@ -111,8 +111,7 @@ defmodule Watwitter.AccountsTest do
 
   describe "apply_user_email/3" do
     setup do
-      params = params_for(:user)
-      %{user: register_user(params), password: params.password}
+      %{user: insert(:user), password: valid_user_password()}
     end
 
     test "requires email to change", %{user: user, password: password} do
@@ -228,8 +227,7 @@ defmodule Watwitter.AccountsTest do
 
   describe "update_user_password/3" do
     setup do
-      params = params_for(:user)
-      %{user: register_user(params), password: params.password}
+      %{user: insert(:user), password: valid_user_password()}
     end
 
     test "validates password", %{user: user, password: password} do
@@ -254,10 +252,10 @@ defmodule Watwitter.AccountsTest do
     end
 
     test "validates current password", %{user: user} do
-      nwe_password = params_for(:user).password
+      new_password = "some other new password 32323"
 
       {:error, changeset} =
-        Accounts.update_user_password(user, "invalid", %{password: nwe_password})
+        Accounts.update_user_password(user, "invalid", %{password: new_password})
 
       assert %{current_password: ["is not valid"]} = errors_on(changeset)
     end

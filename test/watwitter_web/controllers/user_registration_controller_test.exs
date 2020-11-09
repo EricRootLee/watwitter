@@ -12,7 +12,7 @@ defmodule WatwitterWeb.UserRegistrationControllerTest do
     end
 
     test "redirects if already logged in", %{conn: conn} do
-      user = params_for(:user) |> register_user()
+      user = insert(:user)
       conn = conn |> log_in_user(user) |> get(Routes.user_registration_path(conn, :new))
       assert redirected_to(conn) == "/"
     end
@@ -21,7 +21,7 @@ defmodule WatwitterWeb.UserRegistrationControllerTest do
   describe "POST /users/register" do
     @tag :capture_log
     test "creates account and logs the user in", %{conn: conn} do
-      user_params = string_params_for(:user)
+      user_params = string_params_for(:user, password: valid_user_password())
 
       conn =
         post(conn, Routes.user_registration_path(conn, :create), %{

@@ -4,17 +4,16 @@ defmodule WatwitterWeb.PostLive.FormComponentTest do
   import Phoenix.LiveViewTest
 
   @create_attrs %{
-    username: "germsvel",
     body: "some body"
   }
-  @invalid_attrs %{username: nil, body: nil}
+  @invalid_attrs %{body: nil}
   @two_fifty_one ~S"""
   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
     incididunt ut labore et dolore magna aliqua. Ut tortor pretium viverra
     suspendisse potenti nullam ac. Turpis egestas maecenas pharetra convallis
     posuere morbi leo urna molestie. Nunc consequat interdumv
   """
-  @attrs_251_chars %{username: "germsvel", body: @two_fifty_one}
+  @attrs_251_chars %{body: @two_fifty_one}
 
   setup :register_and_log_in_user
 

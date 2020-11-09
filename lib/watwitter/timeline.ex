@@ -18,7 +18,7 @@ defmodule Watwitter.Timeline do
 
   """
   def list_posts do
-    Repo.all(from p in Post, order_by: [desc: p.id])
+    list_posts(page: 1)
   end
 
   @per_page 10
@@ -29,6 +29,7 @@ defmodule Watwitter.Timeline do
         limit: @per_page,
         order_by: [desc: p.id]
     )
+    |> Repo.preload(:user)
   end
 
   @doc """
@@ -45,7 +46,7 @@ defmodule Watwitter.Timeline do
       ** (Ecto.NoResultsError)
 
   """
-  def get_post!(id), do: Repo.get!(Post, id)
+  def get_post!(id), do: Repo.get!(Post, id) |> Repo.preload(:user)
 
   @doc """
   Creates a post.
@@ -136,6 +137,7 @@ defmodule Watwitter.Timeline do
   defp broadcast({:error, _} = error, _event), do: error
 
   defp broadcast({:ok, post}, event) do
+    post = Repo.preload(post, :user)
     Phoenix.PubSub.broadcast(Watwitter.PubSub, "posts", {event, post})
     {:ok, post}
   end

@@ -11,16 +11,16 @@ defmodule WatwitterWeb.PostLive.PostComponent do
           <p class="flex text-sm">
             <span class="truncate text-gray-500">
               <span class="font-bold text-gray-900">
-                German Velasco
+                <%= @post.user.name %>
               </span>
               <span class="pl-1 text-gray-500">
-                @<%= @post.username %>
+                @<%= @post.user.username %>
               </span>
             </span>
             <span class="flex-shrink-0">
               <span class="px-1 text-gray-500">·</span>
               <span class="text-gray-500">
-                Mar 23
+                <%= @post.inserted_at %>
               </span>
             </span>
           </p>

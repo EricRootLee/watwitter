@@ -10,6 +10,7 @@
     <%= live_component @socket, WatwitterWeb.PostLive.FormComponent,
       id: :new,
       post: @post,
+      current_user: @current_user,
       return_to: Routes.post_index_path(@socket, :index) %>
   </div>
 </div>

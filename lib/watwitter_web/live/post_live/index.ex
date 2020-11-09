@@ -10,7 +10,13 @@ defmodule WatwitterWeb.PostLive.Index do
     posts = Timeline.list_posts(page: 1)
 
     socket =
-      assign(socket, posts: posts, recent_posts: [], new_posts: [], page: 1, new_posts_count: 0)
+      assign(socket,
+        posts: posts,
+        recent_posts: [],
+        new_posts: [],
+        page: 1,
+        new_posts_count: 0
+      )
 
     {:ok, socket, temporary_assigns: [posts: [], recent_posts: []]}
   end

@@ -2,15 +2,13 @@ defmodule WatwitterWeb.PostLive.PostComponentTest do
   use WatwitterWeb.ConnCase
 
   import Phoenix.LiveViewTest
-
-  alias Watwitter.Timeline
+  import Watwitter.Factory
 
   setup :register_and_log_in_user
 
   describe "likes" do
     test "users can like a post", %{conn: conn} do
-      post = create(:post)
-
+      post = insert(:post)
       {:ok, view, _} = live(conn, Routes.post_index_path(conn, :index))
 
       view
@@ -23,7 +21,7 @@ defmodule WatwitterWeb.PostLive.PostComponentTest do
 
   describe "reposts" do
     test "user can repost a post", %{conn: conn} do
-      post = create(:post)
+      post = insert(:post)
 
       {:ok, view, _} = live(conn, Routes.post_index_path(conn, :index))
 
@@ -40,14 +38,4 @@ defmodule WatwitterWeb.PostLive.PostComponentTest do
   defp post_card_repost(post), do: post_card(post) <> " [data-role='repost-button']"
   defp post_card_repost_count(post), do: post_card(post) <> " [data-role='repost-count']"
   defp post_card(post), do: "#post-#{post.id}"
-
-  defp create(:post) do
-    attrs = %{
-      username: "germsvel",
-      body: "This is a great tutorial"
-    }
-
-    {:ok, post} = Timeline.create_post(attrs)
-    post
-  end
 end

@@ -22,14 +22,13 @@ defmodule WatwitterWeb.UserSettingsControllerTest do
 
   describe "PUT /users/settings/update_password" do
     test "updates the user password and resets tokens", %{conn: conn} do
-      user_params = params_for(:user)
-      user = register_user(user_params)
+      user = insert(:user)
 
       new_password_conn =
         conn
         |> log_in_user(user)
         |> put(Routes.user_settings_path(conn, :update_password), %{
-          "current_password" => user_params.password,
+          "current_password" => valid_user_password(),
           "user" => %{
             "password" => "new valid password",
             "password_confirmation" => "new valid password"
@@ -65,14 +64,13 @@ defmodule WatwitterWeb.UserSettingsControllerTest do
   describe "PUT /users/settings/update_email" do
     @tag :capture_log
     test "updates the user email", %{conn: conn} do
-      user_params = params_for(:user)
-      user = register_user(user_params)
+      user = insert(:user)
 
       conn =
         conn
         |> log_in_user(user)
         |> put(Routes.user_settings_path(conn, :update_email), %{
-          "current_password" => user_params.password,
+          "current_password" => valid_user_password(),
           "user" => %{"email" => params_for(:user).email}
         })
 

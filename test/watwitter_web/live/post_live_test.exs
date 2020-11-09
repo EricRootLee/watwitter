@@ -2,19 +2,21 @@ defmodule WatwitterWeb.PostLiveTest do
   use WatwitterWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import Watwitter.Factory
 
   alias Watwitter.Timeline
 
   setup :register_and_log_in_user
 
   describe "Index" do
-    test "lists posts", %{conn: conn} do
-      post = create(:post)
+    test "lists posts", %{conn: conn, user: user} do
+      post = insert(:post, user: user)
 
       {:ok, _view, html} = live(conn, Routes.post_index_path(conn, :index))
 
       assert html =~ "Home"
       assert html =~ post.body
+      assert html =~ post.user.username
     end
 
     test "user can compose new tweet from timeline", %{conn: conn} do
@@ -30,11 +32,11 @@ defmodule WatwitterWeb.PostLiveTest do
       assert html =~ "post-form"
     end
 
-    test "user receives notice of new tweets in timeline", %{conn: conn} do
-      create_list(:post, 5)
+    test "user receives notice of new tweets in timeline", %{conn: conn, user: user} do
+      insert_list(5, :post, user: user)
       {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
-      first_post = %{username: "aragorn", body: "most excellent post"}
-      second_post = %{username: "gandalf", body: "truly cool"}
+      first_post = %{user_id: user.id, body: "most excellent post"}
+      second_post = %{user_id: user.id, body: "truly cool"}
       posts = [first_post, second_post]
 
       ensure_posts_absent(view, posts)
@@ -47,11 +49,11 @@ defmodule WatwitterWeb.PostLiveTest do
       refute post_visible?(view, second_post)
     end
 
-    test "clicking on new posts notice displays new posts", %{conn: conn} do
-      create_list(:post, 5)
+    test "clicking on new posts notice displays new posts", %{conn: conn, user: user} do
+      insert_list(5, :post, user: user)
       {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
-      first_post = %{username: "aragorn", body: "most excellent post"}
-      second_post = %{username: "gandalf", body: "truly cool"}
+      first_post = %{user_id: user.id, body: "most excellent post"}
+      second_post = %{user_id: user.id, body: "truly cool"}
       posts = [first_post, second_post]
 
       ensure_posts_absent(view, posts)
@@ -68,10 +70,10 @@ defmodule WatwitterWeb.PostLiveTest do
       assert page_title(view) =~ "Home"
     end
 
-    test "page title reflects number of new tweets", %{conn: conn} do
+    test "page title reflects number of new tweets", %{conn: conn, user: user} do
       {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
-      first_post = %{username: "aragorn", body: "most excellent post"}
-      second_post = %{username: "gandalf", body: "truly cool"}
+      first_post = params_for(:post, user: user)
+      second_post = params_for(:post, user: user)
 
       Timeline.create_post(first_post)
       Timeline.create_post(second_post)
@@ -81,17 +83,17 @@ defmodule WatwitterWeb.PostLiveTest do
       assert page_title(view) =~ "(2) Home"
     end
 
-    test "load more hook fetches more posts (10 per page)", %{conn: conn} do
-      [first, second | _] = create_list(:post, 12)
+    test "load-more hook fetches more posts (10 per page)", %{conn: conn} do
+      [first, second | _] = insert_list(12, :post)
       {:ok, view, _html} = live(conn, Routes.post_index_path(conn, :index))
 
       view
       |> element("#load-more")
       |> render_hook("load-more")
 
-      assert has_element?(view, post_card(second), second.username)
+      assert has_element?(view, post_card(second), second.user.username)
       assert has_element?(view, post_card(second), second.body)
-      assert has_element?(view, post_card(first), first.username)
+      assert has_element?(view, post_card(first), first.user.username)
       assert has_element?(view, post_card(first), first.body)
     end
   end
@@ -101,28 +103,12 @@ defmodule WatwitterWeb.PostLiveTest do
   end
 
   defp post_visible?(view, post) do
-    has_element?(view, "main", post.username) &&
-      has_element?(view, "main", post.body)
+    has_element?(view, "main", post.body)
   end
 
   defp ensure_posts_absent(view, posts) do
     Enum.each(posts, fn post ->
-      refute has_element?(view, "#posts", post.username)
       refute has_element?(view, "#posts", post.body)
     end)
-  end
-
-  defp create_list(:post, count) do
-    1..count
-    |> Enum.map(fn i ->
-      create(:post, %{username: "germsvel#{i}", body: "This is watweet #{i}"})
-    end)
-  end
-
-  @default_attrs %{username: "germsvel", body: "some body"}
-  defp create(:post, attrs \\ %{}) do
-    post_attrs = Map.merge(attrs, @default_attrs)
-    {:ok, post} = Timeline.create_post(post_attrs)
-    post
   end
 end

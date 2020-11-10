@@ -1,13 +1,15 @@
 defmodule WatwitterWeb.PostLive.Index do
   use WatwitterWeb, :live_view
 
+  alias Watwitter.Accounts
   alias Watwitter.Timeline
   alias Watwitter.Timeline.Post
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, %{"user_token" => token}, socket) do
     if connected?(socket), do: Timeline.subscribe()
     posts = Timeline.list_posts(page: 1)
+    current_user = Accounts.get_user_by_session_token(token)
 
     socket =
       assign(socket,
@@ -15,7 +17,8 @@ defmodule WatwitterWeb.PostLive.Index do
         recent_posts: [],
         new_posts: [],
         page: 1,
-        new_posts_count: 0
+        new_posts_count: 0,
+        current_user: current_user
       )
 
     {:ok, socket, temporary_assigns: [posts: [], recent_posts: []]}

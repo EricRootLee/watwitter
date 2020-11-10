@@ -17,7 +17,8 @@ defmodule Watwitter.Factory do
       email: sequence(:email, &"user#{&1}@example.com"),
       name: sequence("Bilbo Baggins"),
       username: sequence("bilbo"),
-      password: valid_user_password()
+      password: valid_user_password(),
+      avatar_url: "http://localhost.com/example"
     }
 
     %User{}

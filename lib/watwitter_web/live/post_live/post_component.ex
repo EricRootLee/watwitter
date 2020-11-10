@@ -5,7 +5,7 @@ defmodule WatwitterWeb.PostLive.PostComponent do
     ~L"""
     <div id="post-<%= @post.id %>" class="px-4 py-3 border-b border-gray-200">
       <div class="flex">
-        <img class="w-10 h-10 mr-3 rounded-full" src="" />
+        <img class="w-10 h-10 mr-3 rounded-full" src="<%= @post.user.avatar_url %>" />
 
         <div class="flex flex-col flex-1 min-w-0">
           <p class="flex text-sm">

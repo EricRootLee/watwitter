@@ -93,6 +93,14 @@ defmodule Watwitter.AccountsTest do
       assert is_nil(user.confirmed_at)
       assert is_nil(user.password)
     end
+
+    test "generates an avatar url" do
+      params = params_for(:user, password: valid_user_password())
+
+      {:ok, user} = Accounts.register_user(params)
+
+      assert is_binary(user.avatar_url)
+    end
   end
 
   describe "change_user_registration/2" do

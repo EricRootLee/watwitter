@@ -4,7 +4,7 @@
 
 <div class="px-3 mt-3 overflow-scroll flex flex-1">
   <div class="mr-4">
-    <img class="rounded-full w-10 h-10" src="http://twivatar.glitch.me/germsvel">
+    <img class="rounded-full w-10 h-10" src="<%= @current_user.avatar_url %>">
   </div>
   <div class="flex-1">
     <%= live_component @socket, WatwitterWeb.PostLive.FormComponent,

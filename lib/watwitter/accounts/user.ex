@@ -10,6 +10,7 @@ defmodule Watwitter.Accounts.User do
     field :username, :string
     field :hashed_password, :string
     field :confirmed_at, :naive_datetime
+    field :avatar_url, :string
 
     timestamps()
   end
@@ -28,6 +29,7 @@ defmodule Watwitter.Accounts.User do
     |> validate_required([:name, :username])
     |> validate_email()
     |> validate_password()
+    |> generate_avatar_url()
   end
 
   defp validate_email(changeset) do
@@ -56,6 +58,18 @@ defmodule Watwitter.Accounts.User do
       changeset
       |> put_change(:hashed_password, Bcrypt.hash_pwd_salt(password))
       |> delete_change(:password)
+    else
+      changeset
+    end
+  end
+
+  defp generate_avatar_url(changeset) do
+    if changeset.valid? do
+      email = get_change(changeset, :email)
+      avatar_url = Watwitter.Avatar.generate(email)
+
+      changeset
+      |> put_change(:avatar_url, avatar_url)
     else
       changeset
     end

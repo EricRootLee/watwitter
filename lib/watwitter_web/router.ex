@@ -21,6 +21,7 @@ defmodule WatwitterWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     live "/", TimelineLive, :index
+    live "/posts/new", PostLive, :new
   end
 
   # Other scopes may use custom stacks.

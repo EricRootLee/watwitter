@@ -1,0 +1,30 @@
+<header class="header">
+  <%= live_redirect to: Routes.timeline_path(@socket, :index) do %>
+    <svg viewBox="0 0 24 24" class="back-svg">
+      <g>
+        <path d="M20 11H7.414l4.293-4.293c.39-.39.39-1.023 0-1.414s-1.023-.39-1.414 0l-6 6c-.39.39-.39 1.023 0 1.414l6 6c.195.195.45.293.707.293s.512-.098.707-.293c.39-.39.39-1.023 0-1.414L7.414 13H20c.553 0 1-.447 1-1s-.447-1-1-1z"></path>
+      </g>
+    </svg>
+  <% end %>
+  <h1 class="header-title">Compose Watweet</h1>
+</header>
+
+<div class="body">
+  <div class="compose-wrapper">
+    <img class="avatar", src="<%= @current_user.avatar_url %>">
+    <%= f = form_for @changeset, "#", phx_submit: "save", phx_change: "validate", id: "new-post", class: "compose-form" %>
+      <div class="compose-fields">
+        <div class="compose-box">
+          <%= textarea f, :body, placeholder: "What's happening?", class: "compose-textarea" %>
+        </div>
+        <div>
+          <%= error_tag f, :body %>
+        </div>
+      </div>
+
+      <div class="compose-actions">
+        <%= submit "Post", phx_disable_with: "Posting...", class: "compose-btn" %>
+      </div>
+    </form>
+  </div>
+</div>

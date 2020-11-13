@@ -59,7 +59,7 @@ defmodule WatwitterWeb.ConnCase do
 
   It returns an updated `conn`.
   """
-  def log_in_user(conn, user) do
+  def log_in_user(conn, user \\ Watwitter.Factory.insert(:user)) do
     token = Watwitter.Accounts.generate_user_session_token(user)
 
     conn

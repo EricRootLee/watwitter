@@ -1,3 +1,9 @@
 <header class="header">
   <h1 class="header-title">Home</h1>
 </header>
+
+<div class="body">
+  <%= for post <- @posts do %>
+    <%= live_component @socket, PostComponent, id: post.id, post: post %>
+  <% end %>
+</div>

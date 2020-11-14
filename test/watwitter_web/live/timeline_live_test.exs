@@ -47,6 +47,17 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
     assert has_element?(timeline_view, ".post", "This is the best watweet")
   end
 
+  test "user can like a post", %{conn: conn} do
+    post = insert(:post, likes_count: 0)
+    {:ok, view, _html} = conn |> log_in_user() |> live("/")
+
+    view
+    |> element("#post-#{post.id} [data-role='like-button']")
+    |> render_click()
+
+    assert has_element?(view, "#post-#{post.id} [data-role='like-count']", "1")
+  end
+
   defp post_card(post) do
     "#post-#{post.id}"
   end

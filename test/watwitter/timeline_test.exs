@@ -65,6 +65,16 @@ defmodule Watwitter.TimelineTest do
 
       assert updated_post.likes_count == 2
     end
+
+    test "broadcasts update to post" do
+      Timeline.subscribe()
+      %{id: id} = post = insert(:post, likes_count: 0)
+
+      {:ok, _post} = Timeline.inc_likes(post)
+
+      assert_receive {:post_updated, updated_post}
+      assert %{id: ^id, likes_count: 1} = updated_post
+    end
   end
 
   describe "inc_reposts/1" do

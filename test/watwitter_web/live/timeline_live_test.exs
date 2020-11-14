@@ -4,6 +4,8 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
   import Phoenix.LiveViewTest
   import Watwitter.Factory
 
+  alias Watwitter.Timeline
+
   test "redirects to login page if unauthenticated", %{conn: conn} do
     {:error, {:redirect, %{to: path}}} = live(conn, "/")
 
@@ -45,6 +47,20 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
       |> follow_redirect(conn, Routes.timeline_path(conn, :index))
 
     assert has_element?(timeline_view, ".post", "This is the best watweet")
+  end
+
+  test "users receive new posts in timeline", %{conn: conn} do
+    another_user = insert(:user)
+    post_params = params_for(:post, user: another_user)
+
+    {:ok, view, _html} = conn |> log_in_user() |> live("/")
+
+    Timeline.create_post(post_params)
+
+    render(view)
+
+    assert has_element?(view, ".post", another_user.username)
+    assert has_element?(view, ".post", post_params.body)
   end
 
   test "user can like a post", %{conn: conn} do

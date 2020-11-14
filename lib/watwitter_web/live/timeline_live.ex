@@ -19,6 +19,12 @@ defmodule WatwitterWeb.TimelineLive do
     {:noreply, socket}
   end
 
+  def handle_info({:post_created, post}, socket) do
+    socket
+    |> update(:posts, fn posts -> [post | posts] end)
+    |> noreply()
+  end
+
   def handle_info({:post_updated, %{id: id} = updated_post}, socket) do
     socket
     |> update(:posts, fn posts ->

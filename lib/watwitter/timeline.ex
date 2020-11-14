@@ -62,6 +62,7 @@ defmodule Watwitter.Timeline do
     %Post{}
     |> Post.changeset(attrs)
     |> Repo.insert()
+    |> broadcast(:post_created)
   end
 
   def inc_likes(%Post{id: id}) do
@@ -69,7 +70,6 @@ defmodule Watwitter.Timeline do
       from(p in Post, where: p.id == ^id, select: p)
       |> Repo.update_all(inc: [likes_count: 1])
 
-    post = Repo.preload(post, [:user])
     broadcast({:ok, post}, :post_updated)
   end
 
@@ -135,6 +135,7 @@ defmodule Watwitter.Timeline do
   defp broadcast({:error, _} = error, _event), do: error
 
   defp broadcast({:ok, post} = ok_tuple, event) do
+    post = Repo.preload(post, [:user])
     Phoenix.PubSub.broadcast(Watwitter.PubSub, "posts", {event, post})
     ok_tuple
   end

@@ -34,7 +34,7 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
 
     {:ok, compose_view, _html} =
       view
-      |> element(~s([data-role="compose"]))
+      |> element(compose_button())
       |> render_click()
       |> follow_redirect(conn, Routes.post_path(conn, :new))
 
@@ -52,13 +52,14 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
     {:ok, view, _html} = conn |> log_in_user() |> live("/")
 
     view
-    |> element("#post-#{post.id} [data-role='like-button']")
+    |> element(post_like_button(post))
     |> render_click()
 
-    assert has_element?(view, "#post-#{post.id} [data-role='like-count']", "1")
+    assert has_element?(view, post_like_count(post), "1")
   end
 
-  defp post_card(post) do
-    "#post-#{post.id}"
-  end
+  defp compose_button, do: "[data-role='compose']"
+  defp post_like_button(post), do: post_card(post) <> " [data-role='like-button']"
+  defp post_like_count(post), do: post_card(post) <> " [data-role='like-count']"
+  defp post_card(post), do: "#post-#{post.id}"
 end

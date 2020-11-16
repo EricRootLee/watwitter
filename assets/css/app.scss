@@ -79,6 +79,18 @@
   @apply flex px-4 py-3 border-b border-gray-200;
 }
 
+.post-to-reply {
+  @apply flex px-4 py-6;
+}
+
+.replying-notice {
+  @apply flex px-16 py-3 leading-3 text-sm font-semibold;
+}
+
+.reply-notice {
+  @apply flex px-16 pt-3 leading-3 text-sm text-gray-500 font-semibold;
+}
+
 .avatar {
   @apply w-10 h-10 mr-3 rounded-full;
 }

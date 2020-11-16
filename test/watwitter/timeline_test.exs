@@ -8,8 +8,8 @@ defmodule Watwitter.TimelineTest do
 
   describe "list_posts/1" do
     test "list_posts/0 returns list of posts" do
-      post = insert(:post)
-      assert Timeline.list_posts() == [post]
+      %{id: id, body: body} = insert(:post)
+      assert [%{id: ^id, body: ^body}] = Timeline.list_posts()
     end
 
     test "list_posts/1 accepts pagination" do
@@ -36,6 +36,14 @@ defmodule Watwitter.TimelineTest do
       assert post.likes_count == 0
       assert post.reposts_count == 0
       assert post.user_id == user.id
+    end
+
+    test "create_post/1 creates a reply when reply_to is set" do
+      user = insert(:user)
+      original_post = insert(:post)
+      valid_attrs = params_for(:post, user_id: user.id, reply_to_id: original_post.id)
+      assert {:ok, %Post{} = post} = Timeline.create_post(valid_attrs)
+      assert post.reply_to_id == original_post.id
     end
 
     test "create_post/1 with invalid data returns error changeset" do

@@ -4,11 +4,16 @@ defmodule WatwitterWeb.PostLive do
   alias Watwitter.Accounts
   alias Watwitter.Timeline
   alias Watwitter.Timeline.Post
+  alias WatwitterWeb.DateHelpers
 
-  def mount(_params, session, socket) do
+  def mount(params, session, socket) do
     changeset = Timeline.change_post(%Post{})
     current_user = Accounts.get_user_by_session_token(session["user_token"])
-    socket = assign(socket, changeset: changeset, current_user: current_user)
+
+    socket =
+      socket
+      |> assign(changeset: changeset, current_user: current_user)
+      |> set_reply_status(params)
 
     {:ok, socket}
   end
@@ -43,4 +48,11 @@ defmodule WatwitterWeb.PostLive do
   end
 
   defp noreply(conn), do: {:noreply, conn}
+
+  defp set_reply_status(socket, %{"reply_to" => post_id}) do
+    post = Timeline.get_post!(post_id)
+    assign(socket, :reply_to, post)
+  end
+
+  defp set_reply_status(socket, _), do: socket
 end

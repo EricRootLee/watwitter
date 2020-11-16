@@ -32,6 +32,30 @@ defmodule WatwitterWeb.Live.PostLiveTest do
     assert html =~ "This is the best"
   end
 
+  test "compose for replying shows post user is replying to", %{conn: conn} do
+    post = insert(:post)
+    conn = log_in_user(conn)
+    {:ok, _view, html} = live(conn, Routes.post_path(conn, :new, reply_to: post.id))
+
+    assert html =~ post.body
+    assert html =~ "Replying to @#{post.user.username}"
+  end
+
+  test "user can reply to a post", %{conn: conn} do
+    conn = log_in_user(conn)
+    post = insert(:post)
+    {:ok, view, _html} = live(conn, Routes.post_path(conn, :new, reply_to: post.id))
+
+    {:ok, _, html} =
+      view
+      |> form("#new-post", post: %{body: "This is the best"})
+      |> render_submit()
+      |> follow_redirect(conn, Routes.timeline_path(conn, :index))
+
+    assert html =~ "Replying to @#{post.user.username}"
+    assert html =~ "This is the best"
+  end
+
   @two_hundred_and_fifty_one ~s"""
   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
     tempor incididunt ut labore et dolore magna aliqua. Ut tortor pretium

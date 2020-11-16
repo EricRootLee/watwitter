@@ -10,9 +10,43 @@
 </header>
 
 <div class="body">
+  <%= if assigns[:reply_to] do %>
+    <div class="post-to-reply">
+      <img class="avatar" src="<%= @reply_to.user.avatar_url %>">
+      <div class="post-content">
+        <div class="post-header">
+          <span class="post-user-info">
+            <span class="post-user-name">
+              <%= @reply_to.user.name %>
+            </span>
+            <span class="post-user-username">
+              @<%= @reply_to.user.username %>
+            </span>
+          </span>
+          <span class="post-date-info">
+            <span class="post-date-separator">.</span>
+            <span class="post-date">
+              <%= DateHelpers.format_short(@reply_to.inserted_at) %>
+            </span>
+          </span>
+        </div>
+
+        <div class="post-body">
+          <%= @reply_to.body %>
+        </div>
+      </div>
+    </div>
+
+    <div class="replying-notice">
+      Replying to @<%= @reply_to.user.username %>
+    </div>
+  <% end %>
   <div class="compose-wrapper">
     <img class="avatar", src="<%= @current_user.avatar_url %>">
     <%= f = form_for @changeset, "#", phx_submit: "save", phx_change: "validate", id: "new-post", class: "compose-form" %>
+      <%= if assigns[:reply_to] do %>
+        <%= hidden_input f, :reply_to_id, value: @reply_to.id %>
+      <% end %>
       <div class="compose-fields">
         <div class="compose-box">
           <%= textarea f, :body, placeholder: "What's happening?", class: "compose-textarea" %>

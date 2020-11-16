@@ -27,7 +27,7 @@ defmodule Watwitter.Timeline do
       order_by: [desc: p.id]
     )
     |> Repo.all()
-    |> Repo.preload([:user])
+    |> Repo.preload([:user, [reply_to: :user]])
   end
 
   @doc """

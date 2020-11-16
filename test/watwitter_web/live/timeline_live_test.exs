@@ -86,10 +86,37 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
     assert has_element?(view, post_repost_count(post), "1")
   end
 
+  test "user can reply to a post", %{conn: conn} do
+    post = insert(:post)
+    user = insert(:user)
+    conn = conn |> log_in_user(user)
+    {:ok, view, _html} = live(conn, "/")
+
+    {:ok, post_view, _html} =
+      view
+      |> element(post_reply_button(post))
+      |> render_click()
+      |> follow_redirect(conn, Routes.post_path(conn, :new, reply_to: post.id))
+
+    {:ok, timeline_view, _html} =
+      post_view
+      |> form("#new-post", post: %{body: "That was great"})
+      |> render_submit()
+      |> follow_redirect(conn, Routes.timeline_path(conn, :index))
+
+    assert has_element?(timeline_view, ".reply-notice", replying_notice(post.user))
+    assert has_element?(timeline_view, ".post", "That was great")
+  end
+
+  defp replying_notice(user) do
+    "Replying to @#{user.username}"
+  end
+
   defp compose_button, do: "[data-role='compose']"
   defp post_like_button(post), do: post_card(post) <> " [data-role='like-button']"
   defp post_like_count(post), do: post_card(post) <> " [data-role='like-count']"
   defp post_repost_button(post), do: post_card(post) <> " [data-role='repost-button']"
   defp post_repost_count(post), do: post_card(post) <> " [data-role='repost-count']"
+  defp post_reply_button(post), do: post_card(post) <> " [data-role='reply-button']"
   defp post_card(post), do: "#post-#{post.id}"
 end

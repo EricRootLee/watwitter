@@ -78,7 +78,7 @@ defmodule Watwitter.Timeline do
       from(p in Post, where: p.id == ^id, select: p)
       |> Repo.update_all(inc: [reposts_count: 1])
 
-    {:ok, post}
+    broadcast({:ok, post}, :post_updated)
   end
 
   @doc """

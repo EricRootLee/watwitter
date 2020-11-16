@@ -74,8 +74,22 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
     assert has_element?(view, post_like_count(post), "1")
   end
 
+  test "user can repost a post", %{conn: conn} do
+    post = insert(:post, reposts_count: 0)
+    user = insert(:user)
+    {:ok, view, _html} = conn |> log_in_user(user) |> live("/")
+
+    view
+    |> element(post_repost_button(post))
+    |> render_click()
+
+    assert has_element?(view, post_repost_count(post), "1")
+  end
+
   defp compose_button, do: "[data-role='compose']"
   defp post_like_button(post), do: post_card(post) <> " [data-role='like-button']"
   defp post_like_count(post), do: post_card(post) <> " [data-role='like-count']"
+  defp post_repost_button(post), do: post_card(post) <> " [data-role='repost-button']"
+  defp post_repost_count(post), do: post_card(post) <> " [data-role='repost-count']"
   defp post_card(post), do: "#post-#{post.id}"
 end

@@ -187,6 +187,45 @@
   @apply px-4 py-2 h-8 rounded-full flex items-center justify-center bg-blue-500 text-white;
 }
 
+// Show
+
+.show-post {
+  @apply flex flex-col px-6 pt-6 border-b border-gray-200;
+
+  > * + * {
+    margin-top: 1.25rem;
+  }
+}
+
+.show-header {
+  @apply flex items-center;
+}
+
+.show-user-info {
+  @apply flex flex-col leading-tight;
+}
+
+.show-user-name {
+  @apply font-bold;
+}
+
+.show-user-username {
+  @apply text-gray-500;
+}
+
+.show-body {
+  @apply text-lg mb-3;
+}
+
+.show-actions {
+  @apply mx-6 py-2 border-t border-gray-200 flex justify-between text-gray-500;
+}
+
+.show-replies {
+  @apply pt-6;
+}
+
+
 // General forms
 
 .form-fields {

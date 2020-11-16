@@ -6,11 +6,6 @@ defmodule WatwitterWeb.TimelineLive.PostComponent do
 
   def render(assigns) do
     ~L"""
-    <%= if @post.reply_to_id do %>
-      <div class="reply-notice">
-        Replying to @<%= @post.reply_to.user.username %>
-      </div>
-    <% end %>
     <div id="post-<%= @post.id %>" class="post">
       <img class="avatar" src="<%= @post.user.avatar_url %>">
       <div class="post-content">
@@ -31,9 +26,11 @@ defmodule WatwitterWeb.TimelineLive.PostComponent do
           </span>
         </div>
 
-        <div class="post-body">
-          <%= @post.body %>
-        </div>
+        <%= live_redirect to: Routes.post_show_path(@socket, :show, @post) do %>
+          <div class="post-body">
+            <%= @post.body %>
+          </div>
+        <% end %>
 
         <div class="post-actions">
           <%= live_redirect to: Routes.post_path(@socket, :new, reply_to: @post.id), class: "post-action", data: [role: "reply-button"] do %>

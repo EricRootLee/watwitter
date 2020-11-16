@@ -4,6 +4,11 @@
 
 <div class="body">
   <%= for post <- @posts do %>
+    <%= if post.reply_to_id do %>
+      <div class="reply-notice">
+        Replying to @<%= post.reply_to.user.username %>
+      </div>
+    <% end %>
     <%= live_component @socket, PostComponent, id: post.id, post: post %>
   <% end %>
 </div>

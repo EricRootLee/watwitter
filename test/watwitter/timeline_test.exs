@@ -22,8 +22,8 @@ defmodule Watwitter.TimelineTest do
 
   describe "get_post!/1" do
     test "get_post!/1 returns the post with given id" do
-      post = insert(:post)
-      assert Timeline.get_post!(post.id) == post
+      %{id: id, body: body} = insert(:post)
+      assert %Post{id: ^id, body: ^body} = Timeline.get_post!(id)
     end
   end
 
@@ -128,7 +128,7 @@ defmodule Watwitter.TimelineTest do
       post = insert(:post)
       invalid_attrs = %{body: nil}
       assert {:error, %Ecto.Changeset{}} = Timeline.update_post(post, invalid_attrs)
-      assert post == Timeline.get_post!(post.id)
+      assert post.body == Timeline.get_post!(post.id).body
     end
   end
 

@@ -22,6 +22,7 @@ defmodule WatwitterWeb.Router do
 
     live "/", TimelineLive, :index
     live "/posts/new", PostLive, :new
+    live "/posts/:id", PostLive.Show, :show
   end
 
   # Other scopes may use custom stacks.

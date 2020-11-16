@@ -44,7 +44,11 @@ defmodule Watwitter.Timeline do
       ** (Ecto.NoResultsError)
 
   """
-  def get_post!(id), do: Post |> Repo.get!(id) |> Repo.preload([:user])
+  def get_post!(id) do
+    Post
+    |> Repo.get!(id)
+    |> Repo.preload([:user, replies: :user])
+  end
 
   @doc """
   Creates a post.
@@ -134,9 +138,9 @@ defmodule Watwitter.Timeline do
 
   defp broadcast({:error, _} = error, _event), do: error
 
-  defp broadcast({:ok, post} = ok_tuple, event) do
+  defp broadcast({:ok, post}, event) do
     post = Repo.preload(post, [:user])
     Phoenix.PubSub.broadcast(Watwitter.PubSub, "posts", {event, post})
-    ok_tuple
+    {:ok, post}
   end
 end

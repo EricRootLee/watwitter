@@ -108,6 +108,22 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
     assert has_element?(timeline_view, ".post", "That was great")
   end
 
+  test "user can see a post with all replies", %{conn: conn} do
+    post = insert(:post)
+    [reply1, reply2] = insert_pair(:post, reply_to_id: post.id)
+    conn = conn |> log_in_user()
+    {:ok, view, _html} = live(conn, "/")
+
+    {:ok, _post_view, html} =
+      view
+      |> element("a", post.body)
+      |> render_click()
+      |> follow_redirect(conn, Routes.post_show_path(conn, :show, post.id))
+
+    assert html =~ reply1.body
+    assert html =~ reply2.body
+  end
+
   defp replying_notice(user) do
     "Replying to @#{user.username}"
   end

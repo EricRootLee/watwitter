@@ -44,12 +44,13 @@ defmodule WatwitterWeb.ComposeLive do
   end
 
   def handle_event("validate", %{"post" => post_params}, socket) do
-    changeset =
-      %Post{}
-      |> Timeline.change_post(post_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign(socket, changeset: changeset)}
+    %Post{}
+    |> Timeline.change_post(post_params)
+    |> Ecto.Changeset.apply_action(:insert)
+    |> case do
+      {:ok, _data} -> {:noreply, socket}
+      {:error, changeset} -> {:noreply, assign(socket, changeset: changeset)}
+    end
   end
 
   def handle_event("save", %{"post" => post_params}, socket) do

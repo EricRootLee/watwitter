@@ -8,14 +8,21 @@ defmodule WatwitterWeb.TimelineLive do
   def mount(_params, session, socket) do
     if connected?(socket), do: Timeline.subscribe()
     current_user = Accounts.get_user_by_session_token(session["user_token"])
-    socket = assign(socket, posts: get_initial_posts(), current_user: current_user)
+    posts = get_top_posts()
 
-    {:ok, socket}
+    {:ok, assign(socket, posts: posts, new_posts_count: 0, current_user: current_user)}
   end
 
-  def handle_info({:post_created, post}, socket) do
+  def handle_event("show-new-posts", _, socket) do
     socket
-    |> update(:posts, fn posts -> [post | posts] end)
+    |> update(:posts, fn _ -> get_top_posts() end)
+    |> update(:new_posts_count, fn _ -> 0 end)
+    |> noreply()
+  end
+
+  def handle_info({:post_created, _post}, socket) do
+    socket
+    |> update(:new_posts_count, fn count -> count + 1 end)
     |> noreply()
   end
 
@@ -32,7 +39,7 @@ defmodule WatwitterWeb.TimelineLive do
 
   defp noreply(socket), do: {:noreply, socket}
 
-  defp get_initial_posts do
+  defp get_top_posts do
     Timeline.list_posts(page: 1, per_page: 10)
   end
 end

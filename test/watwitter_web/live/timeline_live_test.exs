@@ -49,18 +49,33 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
     assert has_element?(timeline_view, ".post", "This is the best watweet")
   end
 
-  test "users receive new posts in timeline", %{conn: conn} do
+  test "users receive new posts notice in timeline", %{conn: conn} do
     another_user = insert(:user)
     post_params = params_for(:post, user: another_user)
 
     {:ok, view, _html} = conn |> log_in_user() |> live("/")
 
     Timeline.create_post(post_params)
+    Timeline.create_post(post_params)
 
     render(view)
 
-    assert has_element?(view, ".post", another_user.username)
-    assert has_element?(view, ".post", post_params.body)
+    assert has_element?(view, new_posts_notice(), "2")
+  end
+
+  test "users can see new posts when clicking new posts notice", %{conn: conn} do
+    another_user = insert(:user)
+    post_params = params_for(:post, user: another_user)
+
+    {:ok, view, _html} = conn |> log_in_user() |> live("/")
+
+    {:ok, post} = Timeline.create_post(post_params)
+
+    view
+    |> element(new_posts_notice(), "1")
+    |> render_click()
+
+    assert has_element?(view, post_card(post), post.body)
   end
 
   test "user can like a post", %{conn: conn} do
@@ -128,6 +143,7 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
     "Replying to @#{user.username}"
   end
 
+  defp new_posts_notice, do: "[data-role='new-posts-notice']"
   defp compose_button, do: "[data-role='compose']"
   defp post_like_button(post), do: post_card(post) <> " [data-role='like-button']"
   defp post_like_count(post), do: post_card(post) <> " [data-role='like-count']"

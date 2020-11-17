@@ -19,6 +19,20 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
     assert render(view) =~ "Home"
   end
 
+  test "clicking on avatar redirects to settings", %{conn: conn} do
+    user = insert(:user)
+    conn = conn |> log_in_user(user)
+    {:ok, view, _html} = live(conn, "/")
+
+    {:ok, conn} =
+      view
+      |> element("#user-settings")
+      |> render_click()
+      |> follow_redirect(conn, Routes.user_settings_path(conn, :edit))
+
+    assert html_response(conn, 200) =~ user.email
+  end
+
   test "renders a list of posts", %{conn: conn} do
     [post1, post2] = insert_pair(:post)
 

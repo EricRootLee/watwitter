@@ -4,6 +4,7 @@ defmodule WatwitterWeb.TimelineLive do
   alias Watwitter.Accounts
   alias Watwitter.Timeline
   alias WatwitterWeb.PostComponent
+  alias WatwitterWeb.SVGHelpers
 
   def mount(_params, session, socket) do
     current_user = Accounts.get_user_by_session_token(session["user_token"])
@@ -22,6 +23,12 @@ defmodule WatwitterWeb.TimelineLive do
     <div class="body">
       <%= for post <- @posts do %>
         <%= live_component @socket, PostComponent, post: post %>
+      <% end %>
+    </div>
+
+    <div class="new-post-button">
+      <%= live_redirect to: Routes.compose_path(@socket, :new), id: "compose-button" do %>
+        <%= SVGHelpers.compose_svg() %>
       <% end %>
     </div>
     """

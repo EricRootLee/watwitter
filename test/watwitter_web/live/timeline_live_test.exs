@@ -29,4 +29,16 @@ defmodule WatwitterWeb.TimelineLiveTest do
     assert has_element?(view, "#post-#{post1.id}")
     assert has_element?(view, "#post-#{post2.id}")
   end
+
+  test "user can navigate to create a new post", %{conn: conn} do
+    {:ok, view, _html} = live(conn, "/")
+
+    {:ok, _compose_view, html} =
+      view
+      |> element("#compose-button")
+      |> render_click()
+      |> follow_redirect(conn, Routes.compose_path(conn, :new))
+
+    assert html =~ "Compose"
+  end
 end

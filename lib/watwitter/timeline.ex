@@ -64,52 +64,22 @@ defmodule Watwitter.Timeline do
     |> Repo.insert()
   end
 
+  @doc """
+  Likes a post.
+
+  ## Examples
+
+      iex> like_post(user, post)
+      {:ok, %Like{}}
+
+      iex> like_post(%{id: nil}, %{id: nil})
+      {:error, %Ecto.Changeset{}}
+
+  """
   def like_post(user, post) do
     %Like{}
     |> Like.changeset(%{user_id: user.id, post_id: post.id})
     |> Repo.insert()
-  end
-
-  def inc_reposts(%Post{id: id}) do
-    {1, [post]} =
-      from(p in Post, where: p.id == ^id, select: p)
-      |> Repo.update_all(inc: [reposts_count: 1])
-
-    {:ok, post}
-  end
-
-  @doc """
-  Updates a post.
-
-  ## Examples
-
-      iex> update_post(post, %{field: new_value})
-      {:ok, %Post{}}
-
-      iex> update_post(post, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_post(%Post{} = post, attrs) do
-    post
-    |> Post.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a post.
-
-  ## Examples
-
-      iex> delete_post(post)
-      {:ok, %Post{}}
-
-      iex> delete_post(post)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_post(%Post{} = post) do
-    Repo.delete(post)
   end
 
   @doc """

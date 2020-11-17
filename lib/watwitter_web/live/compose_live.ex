@@ -24,6 +24,7 @@ defmodule WatwitterWeb.ComposeLive do
 
     <div class="body">
       <div class="compose-wrapper">
+        <img class="avatar" src="<%= @current_user.avatar_url %>">
         <%= f = form_for @changeset, "#", phx_submit: "save", phx_change: "validate", id: "new-post", class: "compose-form" %>
           <div class="compose-fields">
             <div class="compose-box">

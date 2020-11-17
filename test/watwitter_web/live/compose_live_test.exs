@@ -5,6 +5,12 @@ defmodule WatwitterWeb.ComposeLiveTest do
 
   setup :register_and_log_in_user
 
+  test "compose displys user avatar", %{conn: conn, user: user} do
+    {:ok, _view, html} = live(conn, Routes.compose_path(conn, :new))
+
+    assert html =~ user.avatar_url
+  end
+
   test "user can navigate back to timeline", %{conn: conn} do
     {:ok, view, _html} = live(conn, Routes.compose_path(conn, :new))
 

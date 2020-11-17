@@ -6,7 +6,7 @@ defmodule Watwitter.Timeline do
   import Ecto.Query, warn: false
   alias Watwitter.Repo
 
-  alias Watwitter.Timeline.Post
+  alias Watwitter.Timeline.{Like, Post}
 
   @doc """
   Returns the list of posts.
@@ -27,7 +27,7 @@ defmodule Watwitter.Timeline do
       order_by: [desc: p.id]
     )
     |> Repo.all()
-    |> Repo.preload([:user, [reply_to: :user]])
+    |> Repo.preload([:user, :likes, [reply_to: :user]])
   end
 
   @doc """
@@ -47,7 +47,7 @@ defmodule Watwitter.Timeline do
   def get_post!(id) do
     Post
     |> Repo.get!(id)
-    |> Repo.preload([:user, replies: :user])
+    |> Repo.preload([:user, :likes, replies: [:likes, :user]])
   end
 
   @doc """
@@ -69,12 +69,22 @@ defmodule Watwitter.Timeline do
     |> broadcast(:post_created)
   end
 
-  def inc_likes(%Post{id: id}) do
+  def like_post(user, post) do
+    {:ok, %{post: post}} =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:likes, Like.changeset(%Like{}, %{user_id: user.id, post_id: post.id}))
+      |> Ecto.Multi.run(:post, fn _, _ -> inc_likes(post) end)
+      |> Repo.transaction()
+
+    broadcast({:ok, post}, :post_updated)
+  end
+
+  defp inc_likes(%Post{id: id}) do
     {1, [post]} =
       from(p in Post, where: p.id == ^id, select: p)
       |> Repo.update_all(inc: [likes_count: 1])
 
-    broadcast({:ok, post}, :post_updated)
+    {:ok, post}
   end
 
   def inc_reposts(%Post{id: id}) do
@@ -139,7 +149,7 @@ defmodule Watwitter.Timeline do
   defp broadcast({:error, _} = error, _event), do: error
 
   defp broadcast({:ok, post}, event) do
-    post = Repo.preload(post, [:user])
+    post = Repo.preload(post, [:user, :likes])
     Phoenix.PubSub.broadcast(Watwitter.PubSub, "posts", {event, post})
     {:ok, post}
   end

@@ -8,6 +8,7 @@ defmodule Watwitter.Timeline.Post do
     field :reposts_count, :integer, default: 0
 
     has_many :replies, Watwitter.Timeline.Post, foreign_key: :reply_to_id
+    has_many :likes, Watwitter.Timeline.Like
     belongs_to :reply_to, Watwitter.Timeline.Post
     belongs_to :user, Watwitter.Accounts.User
 

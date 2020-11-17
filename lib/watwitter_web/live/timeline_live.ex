@@ -1,22 +1,16 @@
 defmodule WatwitterWeb.TimelineLive do
   use WatwitterWeb, :live_view
 
+  alias Watwitter.Accounts
   alias Watwitter.Timeline
   alias WatwitterWeb.TimelineLive.PostComponent
 
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: Timeline.subscribe()
-    socket = assign(socket, :posts, get_initial_posts())
+    current_user = Accounts.get_user_by_session_token(session["user_token"])
+    socket = assign(socket, posts: get_initial_posts(), current_user: current_user)
 
     {:ok, socket}
-  end
-
-  def handle_event("like", %{"post_id" => id}, socket) do
-    id
-    |> Timeline.get_post!()
-    |> Timeline.inc_likes()
-
-    {:noreply, socket}
   end
 
   def handle_info({:post_created, post}, socket) do

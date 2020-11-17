@@ -74,21 +74,32 @@ defmodule Watwitter.TimelineTest do
     end
   end
 
-  describe "inc_likes/1" do
+  describe "like_post/2" do
+    test "creates a like for user and post" do
+      user = insert(:user)
+      post = insert(:post)
+
+      {:ok, updated_post} = Timeline.like_post(user, post)
+
+      assert user.id in Enum.map(updated_post.likes, & &1.user_id)
+    end
+
     test "increments a post's likes count" do
+      [user1, user2] = insert_pair(:user)
       post = insert(:post, likes_count: 0)
 
-      {:ok, _post} = Timeline.inc_likes(post)
-      {:ok, updated_post} = Timeline.inc_likes(post)
+      {:ok, _post} = Timeline.like_post(user1, post)
+      {:ok, updated_post} = Timeline.like_post(user2, post)
 
       assert updated_post.likes_count == 2
     end
 
     test "broadcasts update to post" do
       Timeline.subscribe()
+      user = insert(:user)
       %{id: id} = post = insert(:post, likes_count: 0)
 
-      {:ok, _post} = Timeline.inc_likes(post)
+      {:ok, _post} = Timeline.like_post(user, post)
 
       assert_receive {:post_updated, updated_post}
       assert %{id: ^id, likes_count: 1} = updated_post

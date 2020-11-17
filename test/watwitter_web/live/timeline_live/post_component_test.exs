@@ -8,10 +8,10 @@ defmodule WatwitterWeb.TimelineLive.PostComponentTest do
   alias WatwitterWeb.TimelineLive.PostComponent
 
   test "renders post's info: body, date, user's name, username, and avatar" do
-    post = insert(:post)
+    post = insert(:post, likes: [])
     user = post.user
 
-    html = render_component(PostComponent, id: post.id, post: post)
+    html = render_component(PostComponent, id: post.id, post: post, current_user: user)
 
     assert html =~ post.body
     assert html =~ user.name

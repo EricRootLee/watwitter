@@ -64,7 +64,7 @@
 
   <div class="show-replies">
     <%= for reply <- @post.replies do %>
-      <%= live_component @socket, PostComponent, id: reply.id, post: reply %>
+      <%= live_component @socket, PostComponent, id: reply.id, post: reply, current_user: @current_user %>
     <% end %>
   </div>
 </div>

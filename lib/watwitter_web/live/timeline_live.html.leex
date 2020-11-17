@@ -9,7 +9,7 @@
         Replying to @<%= post.reply_to.user.username %>
       </div>
     <% end %>
-    <%= live_component @socket, PostComponent, id: post.id, post: post %>
+    <%= live_component @socket, PostComponent, id: post.id, post: post, current_user: @current_user %>
   <% end %>
 </div>
 

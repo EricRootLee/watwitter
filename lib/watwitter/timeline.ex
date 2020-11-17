@@ -4,9 +4,9 @@ defmodule Watwitter.Timeline do
   """
 
   import Ecto.Query, warn: false
-  alias Watwitter.Repo
 
-  alias Watwitter.Timeline.Post
+  alias Watwitter.Repo
+  alias Watwitter.Timeline.{Like, Post}
 
   @doc """
   Returns the list of posts.
@@ -27,7 +27,7 @@ defmodule Watwitter.Timeline do
       order_by: [desc: p.id]
     )
     |> Repo.all()
-    |> Repo.preload([:user])
+    |> Repo.preload([:user, :likes])
   end
 
   @doc """
@@ -44,7 +44,7 @@ defmodule Watwitter.Timeline do
       ** (Ecto.NoResultsError)
 
   """
-  def get_post!(id), do: Post |> Repo.get!(id) |> Repo.preload([:user])
+  def get_post!(id), do: Post |> Repo.get!(id) |> Repo.preload([:user, :likes])
 
   @doc """
   Creates a post.
@@ -64,12 +64,10 @@ defmodule Watwitter.Timeline do
     |> Repo.insert()
   end
 
-  def inc_likes(%Post{id: id}) do
-    {1, [post]} =
-      from(p in Post, where: p.id == ^id, select: p)
-      |> Repo.update_all(inc: [likes_count: 1])
-
-    {:ok, post}
+  def like_post(user, post) do
+    %Like{}
+    |> Like.changeset(%{user_id: user.id, post_id: post.id})
+    |> Repo.insert()
   end
 
   def inc_reposts(%Post{id: id}) do

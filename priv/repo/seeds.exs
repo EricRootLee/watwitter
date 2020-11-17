@@ -70,7 +70,7 @@ posts = %{
 
   case Accounts.register_user(params) do
     {:ok, user} -> user
-    {:error, error} -> Repo.get_by!(Accounts.User, username: username)
+    {:error, _error} -> Repo.get_by!(Accounts.User, username: username)
   end
 end)
 |> Enum.each(fn user ->

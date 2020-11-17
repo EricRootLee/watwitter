@@ -16,6 +16,10 @@
     <% end %>
     <%= live_component @socket, PostComponent, id: post.id, post: post, current_user: @current_user %>
   <% end %>
+
+  <div id="load-more" class="load-more-placeholder" phx-hook="InfiniteScroll">
+    Loading...
+  </div>
 </div>
 
 <div class="new-post-button">

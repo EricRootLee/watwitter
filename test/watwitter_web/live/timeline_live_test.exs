@@ -140,6 +140,26 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
     assert html =~ reply2.body
   end
 
+  test "user can load older posts (10 per page)", %{conn: conn} do
+    [first, second | posts] = insert_list(12, :post)
+
+    conn = conn |> log_in_user()
+    {:ok, view, _html} = live(conn, "/")
+
+    render(view)
+
+    view
+    |> element("#load-more")
+    |> render_hook("load-more")
+
+    Enum.each(posts, fn post ->
+      assert has_element?(view, post_card(post), post.body)
+    end)
+
+    assert has_element?(view, post_card(first), first.body)
+    assert has_element?(view, post_card(second), second.body)
+  end
+
   defp replying_notice(user) do
     "Replying to @#{user.username}"
   end

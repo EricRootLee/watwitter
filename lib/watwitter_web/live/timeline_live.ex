@@ -10,7 +10,7 @@ defmodule WatwitterWeb.TimelineLive do
     current_user = Accounts.get_user_by_session_token(session["user_token"])
     posts = get_top_posts()
 
-    {:ok, assign(socket, posts: posts, new_posts_count: 0, current_user: current_user)}
+    {:ok, assign(socket, posts: posts, new_posts_count: 0, page: 1, current_user: current_user)}
   end
 
   def handle_event("show-new-posts", _, socket) do
@@ -18,6 +18,13 @@ defmodule WatwitterWeb.TimelineLive do
     |> update(:posts, fn _ -> get_top_posts() end)
     |> update(:new_posts_count, fn _ -> 0 end)
     |> update_page_title()
+    |> noreply()
+  end
+
+  def handle_event("load-more", _, socket) do
+    socket
+    |> update(:page, fn page -> page + 1 end)
+    |> fetch_more_posts()
     |> noreply()
   end
 
@@ -47,6 +54,13 @@ defmodule WatwitterWeb.TimelineLive do
     else
       assign(socket, :page_title, "Home")
     end
+  end
+
+  defp fetch_more_posts(socket) do
+    new_posts = Timeline.list_posts(page: socket.assigns.page)
+
+    socket
+    |> update(:posts, fn posts -> posts ++ new_posts end)
   end
 
   defp noreply(socket), do: {:noreply, socket}

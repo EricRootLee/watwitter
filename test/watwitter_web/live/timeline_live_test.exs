@@ -81,16 +81,18 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
   test "users can see new posts when clicking new posts notice", %{conn: conn} do
     another_user = insert(:user)
     post_params = params_for(:post, user: another_user)
-
-    {:ok, view, _html} = conn |> log_in_user() |> live("/")
+    conn = conn |> log_in_user()
+    {:ok, view, _html} = live(conn, "/")
 
     {:ok, post} = Timeline.create_post(post_params)
 
-    view
-    |> element(new_posts_notice(), "1")
-    |> render_click()
+    {:ok, refreshed_view, _} =
+      view
+      |> element(new_posts_notice(), "1")
+      |> render_click()
+      |> follow_redirect(conn)
 
-    assert has_element?(view, post_card(post), post.body)
+    assert has_element?(refreshed_view, post_card(post), post.body)
   end
 
   test "user can like a post", %{conn: conn} do

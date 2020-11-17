@@ -49,7 +49,7 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
     assert has_element?(timeline_view, ".post", "This is the best watweet")
   end
 
-  test "users receive new posts notice in timeline", %{conn: conn} do
+  test "users receive new posts notice in timeline and tab title", %{conn: conn} do
     another_user = insert(:user)
     post_params = params_for(:post, user: another_user)
 
@@ -61,6 +61,7 @@ defmodule WatwitterWeb.Live.TimelineLiveTest do
     render(view)
 
     assert has_element?(view, new_posts_notice(), "2")
+    assert page_title(view) =~ "2"
   end
 
   test "users can see new posts when clicking new posts notice", %{conn: conn} do

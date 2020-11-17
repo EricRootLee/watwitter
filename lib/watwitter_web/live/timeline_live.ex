@@ -17,12 +17,14 @@ defmodule WatwitterWeb.TimelineLive do
     socket
     |> update(:posts, fn _ -> get_top_posts() end)
     |> update(:new_posts_count, fn _ -> 0 end)
+    |> update_page_title()
     |> noreply()
   end
 
   def handle_info({:post_created, _post}, socket) do
     socket
     |> update(:new_posts_count, fn count -> count + 1 end)
+    |> update_page_title()
     |> noreply()
   end
 
@@ -35,6 +37,16 @@ defmodule WatwitterWeb.TimelineLive do
       end)
     end)
     |> noreply()
+  end
+
+  defp update_page_title(socket) do
+    new_posts_count = socket.assigns.new_posts_count
+
+    if new_posts_count > 0 do
+      assign(socket, :page_title, "(#{new_posts_count}) Home")
+    else
+      assign(socket, :page_title, "Home")
+    end
   end
 
   defp noreply(socket), do: {:noreply, socket}

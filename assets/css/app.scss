@@ -45,12 +45,12 @@
   @apply flex items-center px-4 py-3 border-b;
 }
 
-.header-avatar {
-  @apply rounded-full w-10 h-10;
+.avatar {
+  @apply w-10 h-10 rounded-full;
 }
 
 .header-title {
-  @apply text-lg font-extrabold;
+  @apply ml-3 text-lg font-extrabold;
 }
 
 .section-title {
@@ -79,12 +79,8 @@
   @apply flex px-4 py-3 border-b border-gray-200;
 }
 
-.avatar {
-  @apply w-10 h-10 mr-3 rounded-full;
-}
-
 .post-content {
-  @apply flex flex-col flex-1 min-w-0;
+  @apply flex flex-col flex-1 min-w-0 pl-3;
 }
 
 .post-header {
@@ -150,7 +146,7 @@
 }
 
 .compose-form {
-  @apply flex-1;
+  @apply flex-1 ml-3;
 }
 
 .compose-fields {
@@ -164,7 +160,7 @@
 }
 
 .compose-textarea {
-  @apply w-full p-3;
+  @apply w-full py-3 pr-3;
 }
 
 .compose-actions {

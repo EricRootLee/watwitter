@@ -19,4 +19,14 @@ defmodule WatwitterWeb.Live.PostComponentTest do
     assert html =~ "@#{user.username}"
     assert html =~ user.avatar_url
   end
+
+  test "render's like button and count" do
+    post = insert(:post, likes_count: 259)
+
+    html = render_component(PostComponent, post: post)
+
+    assert html =~ "like-button"
+    assert html =~ "like-count"
+    assert html =~ "259"
+  end
 end

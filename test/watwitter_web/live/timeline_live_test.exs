@@ -94,6 +94,18 @@ defmodule WatwitterWeb.TimelineLiveTest do
     assert has_element?(view, like_count(post), "1")
   end
 
+  test "user liking post broadcast notification to others", %{conn: conn} do
+    Watwitter.Timeline.subscribe()
+    %{id: id} = post = insert(:post, likes_count: 0)
+    {:ok, view, _html} = live(conn, "/")
+
+    view
+    |> element(like_button(post))
+    |> render_click()
+
+    assert_receive {:post_updated, %{id: ^id}}
+  end
+
   defp like_button(post), do: post_card(post) <> " [data-role='like-button']"
   defp like_count(post), do: post_card(post) <> " [data-role='like-count']"
 

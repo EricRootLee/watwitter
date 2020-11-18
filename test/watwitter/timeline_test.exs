@@ -71,7 +71,7 @@ defmodule Watwitter.TimelineTest do
       user = insert(:user)
       post = insert(:post)
 
-      {:ok, like} = Timeline.like_post(user, post)
+      {:ok, like} = Timeline.like_post(post, user)
 
       updated_post = Timeline.get_post!(post.id)
       assert updated_post.likes == [like]
@@ -83,8 +83,8 @@ defmodule Watwitter.TimelineTest do
       [user1, user2] = insert_pair(:user)
       post = insert(:post, likes_count: 0)
 
-      {:ok, _like} = Timeline.like_post(user1, post)
-      {:ok, _like} = Timeline.like_post(user2, post)
+      {:ok, _like} = Timeline.like_post(post, user1)
+      {:ok, _like} = Timeline.like_post(post, user2)
 
       updated_post = Timeline.get_post!(post.id)
       assert updated_post.likes_count == 2

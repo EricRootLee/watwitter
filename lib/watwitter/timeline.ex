@@ -5,6 +5,7 @@ defmodule Watwitter.Timeline do
 
   import Ecto.Query, warn: false
 
+  alias Watwitter.Accounts.User
   alias Watwitter.Repo
   alias Watwitter.Timeline.{Like, Post}
 
@@ -70,16 +71,16 @@ defmodule Watwitter.Timeline do
 
   ## Examples
 
-      iex> like_post(user, post)
+      iex> like_post(post, user)
       {:ok, %Like{}}
 
       iex> like_post(%{id: nil}, %{id: nil})
       {:error, %Ecto.Changeset{}}
 
   """
-  def like_post(user, post) do
+  def like_post(%Post{} = post, %User{} = user) do
     %Like{}
-    |> Like.changeset(%{user_id: user.id, post_id: post.id})
+    |> Like.changeset(%{post_id: post.id, user_id: user.id})
     |> Repo.insert()
   end
 

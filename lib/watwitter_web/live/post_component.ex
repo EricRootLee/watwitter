@@ -44,8 +44,7 @@ defmodule WatwitterWeb.PostComponent do
   def handle_event("like", _, socket) do
     post = socket.assigns.post
     current_user = socket.assigns.current_user
-    updated_post = Timeline.like_post!(post, current_user)
-    Timeline.broadcast_post_update(updated_post)
+    Timeline.like_post!(post, current_user)
 
     {:noreply, socket}
   end

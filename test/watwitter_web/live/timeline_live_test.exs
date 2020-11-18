@@ -61,8 +61,8 @@ defmodule WatwitterWeb.TimelineLiveTest do
     # Extract this into a single place so at least "posts" and {:post_created,
     # post} are behind an interface that is used by all places. Reduces
     # fragility while giving us flexibility
-    Phoenix.PubSub.broadcast(Watwitter.PubSub, "posts", {:post_created, %{}})
-    Phoenix.PubSub.broadcast(Watwitter.PubSub, "posts", {:post_created, %{}})
+    Watwitter.Timeline.broadcast_post_creation(%{})
+    Watwitter.Timeline.broadcast_post_creation(%{})
 
     assert has_element?(view, new_posts_notice(), "2")
   end
@@ -71,7 +71,7 @@ defmodule WatwitterWeb.TimelineLiveTest do
     {:ok, view, _html} = live(conn, "/")
 
     post = insert(:post)
-    Phoenix.PubSub.broadcast(Watwitter.PubSub, "posts", {:post_created, post})
+    Watwitter.Timeline.broadcast_post_creation(post)
 
     view
     |> element(new_posts_notice())

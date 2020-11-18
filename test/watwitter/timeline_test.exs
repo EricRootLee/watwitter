@@ -54,6 +54,16 @@ defmodule Watwitter.TimelineTest do
       assert {:error, %Ecto.Changeset{}} =
                Timeline.create_post(%{body: @two_hundred_and_fifty_one})
     end
+
+    test "broadcasts notification of a post being created" do
+      Timeline.subscribe()
+      user = insert(:user)
+      params = params_for(:post, user_id: user.id)
+
+      {:ok, post} = Timeline.create_post(params)
+
+      assert_receive {:post_created, ^post}
+    end
   end
 
   describe "like_post/2" do

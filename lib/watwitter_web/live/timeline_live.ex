@@ -7,10 +7,11 @@ defmodule WatwitterWeb.TimelineLive do
   alias WatwitterWeb.SVGHelpers
 
   def mount(_params, session, socket) do
+    if connected?(socket), do: Timeline.subscribe()
     current_user = Accounts.get_user_by_session_token(session["user_token"])
     posts = Timeline.list_posts()
 
-    {:ok, assign(socket, posts: posts, current_user: current_user)}
+    {:ok, assign(socket, posts: posts, new_posts_count: 0, current_user: current_user)}
   end
 
   def render(assigns) do
@@ -21,6 +22,11 @@ defmodule WatwitterWeb.TimelineLive do
     </header>
 
     <div class="body">
+      <%= if @new_posts_count > 0 do %>
+        <div phx-click="show-new-posts" class="new-posts-notice" id="new-posts-notice">
+          <%= ngettext("Show 1 post", "Show %{count} posts", @new_posts_count) %>
+        </div>
+      <% end %>
       <%= for post <- @posts do %>
         <%= live_component @socket, PostComponent, post: post %>
       <% end %>
@@ -32,5 +38,17 @@ defmodule WatwitterWeb.TimelineLive do
       <% end %>
     </div>
     """
+  end
+
+  def handle_event("show-new-posts", _, socket) do
+    socket = assign(socket, new_posts_count: 0, posts: Timeline.list_posts())
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:post_created, _post}, socket) do
+    socket = update(socket, :new_posts_count, fn count -> count + 1 end)
+
+    {:noreply, socket}
   end
 end

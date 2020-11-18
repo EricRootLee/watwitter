@@ -29,4 +29,13 @@ defmodule WatwitterWeb.Live.PostComponentTest do
     assert html =~ "like-count"
     assert html =~ "259"
   end
+
+  test "render's red liked button when current user liked post" do
+    user = insert(:user)
+    post = insert(:post, likes: [%Watwitter.Timeline.Like{user_id: user.id}])
+
+    html = render_component(PostComponent, id: post.id, post: post, current_user: user)
+
+    assert html =~ "post-liked"
+  end
 end

@@ -31,10 +31,17 @@ defmodule WatwitterWeb.PostComponent do
         </div>
 
         <div class="post-actions">
-          <a class="post-action" href="#" phx-click="like" phx-target="<%= @myself %>" data-role="like-button">
-            <%= SVGHelpers.like_svg() %>
-            <span data-role="like-count" class="post-action-count"><%= @post.likes_count %></span>
-          </a>
+          <%= if current_user_liked?(assigns) do %>
+            <a class="post-action post-liked" href="#" phx-click="like" phx-target="<%= @myself %>" data-role="like-button">
+              <%= SVGHelpers.liked_svg() %>
+              <span data-role="like-count" class="post-action-count"><%= @post.likes_count %></span>
+            </a>
+          <% else %>
+            <a class="post-action" href="#" phx-click="like" phx-target="<%= @myself %>" data-role="like-button">
+              <%= SVGHelpers.like_svg() %>
+              <span data-role="like-count" class="post-action-count"><%= @post.likes_count %></span>
+            </a>
+          <% end %>
         </div>
       </div>
     </div>
@@ -47,5 +54,12 @@ defmodule WatwitterWeb.PostComponent do
     Timeline.like_post!(post, current_user)
 
     {:noreply, socket}
+  end
+
+  defp current_user_liked?(assigns) do
+    post = assigns.post
+    current_user = assigns.current_user
+
+    current_user.id in Enum.map(post.likes, & &1.user_id)
   end
 end

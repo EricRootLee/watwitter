@@ -66,15 +66,14 @@ defmodule Watwitter.TimelineTest do
     end
   end
 
-  describe "like_post/2" do
+  describe "like_post!/2" do
     test "creates a like for user and post" do
       user = insert(:user)
       post = insert(:post)
 
-      {:ok, like} = Timeline.like_post(post, user)
+      updated_post = Timeline.like_post!(post, user)
 
-      updated_post = Timeline.get_post!(post.id)
-      assert updated_post.likes == [like]
+      assert [like] = updated_post.likes
       assert like.user_id == user.id
       assert like.post_id == post.id
     end
@@ -83,10 +82,9 @@ defmodule Watwitter.TimelineTest do
       [user1, user2] = insert_pair(:user)
       post = insert(:post, likes_count: 0)
 
-      {:ok, _like} = Timeline.like_post(post, user1)
-      {:ok, _like} = Timeline.like_post(post, user2)
+      _updated_post = Timeline.like_post!(post, user1)
+      updated_post = Timeline.like_post!(post, user2)
 
-      updated_post = Timeline.get_post!(post.id)
       assert updated_post.likes_count == 2
     end
   end

@@ -71,17 +71,19 @@ defmodule Watwitter.Timeline do
 
   ## Examples
 
-      iex> like_post(post, user)
-      {:ok, %Like{}}
+      iex> like_post!(post, user)
+      %Post{}
 
-      iex> like_post(%{id: nil}, %{id: nil})
-      {:error, %Ecto.Changeset{}}
+      iex> like_post!(%{id: nil}, %{id: nil})
+      ** (Ecto.NoResultsError)
 
   """
-  def like_post(%Post{} = post, %User{} = user) do
+  def like_post!(%Post{} = post, %User{} = user) do
     %Like{}
     |> Like.changeset(%{post_id: post.id, user_id: user.id})
-    |> Repo.insert()
+    |> Repo.insert!()
+
+    get_post!(post.id)
   end
 
   @doc """

@@ -65,6 +65,7 @@ defmodule WatwitterWeb.TimelineLiveTest do
     Watwitter.Timeline.broadcast_post_creation(%{})
 
     assert has_element?(view, new_posts_notice(), "2")
+    assert page_title(view) =~ "(2)"
   end
 
   test "user can see new posts when clicking on notification of new post", %{conn: conn} do
@@ -79,6 +80,7 @@ defmodule WatwitterWeb.TimelineLiveTest do
 
     assert has_element?(view, post_card(post))
     refute has_element?(view, new_posts_notice())
+    refute page_title(view) =~ "(1)"
   end
 
   defp post_card(%{id: id}), do: "#post-#{id}"

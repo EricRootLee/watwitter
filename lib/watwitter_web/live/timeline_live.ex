@@ -41,14 +41,30 @@ defmodule WatwitterWeb.TimelineLive do
   end
 
   def handle_event("show-new-posts", _, socket) do
-    socket = assign(socket, new_posts_count: 0, posts: Timeline.list_posts())
+    socket =
+      socket
+      |> assign(new_posts_count: 0, posts: Timeline.list_posts())
+      |> set_page_title()
 
     {:noreply, socket}
   end
 
   def handle_info({:post_created, _post}, socket) do
-    socket = update(socket, :new_posts_count, fn count -> count + 1 end)
+    socket =
+      socket
+      |> update(:new_posts_count, fn count -> count + 1 end)
+      |> set_page_title()
 
     {:noreply, socket}
+  end
+
+  defp set_page_title(socket) do
+    count = socket.assigns.new_posts_count
+
+    if count > 0 do
+      assign(socket, :page_title, "(#{count}) Home")
+    else
+      assign(socket, :page_title, "Home")
+    end
   end
 end

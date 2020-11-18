@@ -11,7 +11,7 @@ defmodule WatwitterWeb.Live.PostComponentTest do
     user = insert(:user)
     post = insert(:post, user: user)
 
-    html = render_component(PostComponent, post: post)
+    html = render_component(PostComponent, id: post.id, post: post, current_user: user)
 
     assert html =~ post.body
     assert html =~ DateHelpers.format_short(post.inserted_at)
@@ -23,7 +23,7 @@ defmodule WatwitterWeb.Live.PostComponentTest do
   test "render's like button and count" do
     post = insert(:post, likes_count: 259)
 
-    html = render_component(PostComponent, post: post)
+    html = render_component(PostComponent, id: post.id, post: post, current_user: insert(:user))
 
     assert html =~ "like-button"
     assert html =~ "like-count"

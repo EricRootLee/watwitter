@@ -28,7 +28,7 @@ defmodule WatwitterWeb.TimelineLive do
         </div>
       <% end %>
       <%= for post <- @posts do %>
-        <%= live_component @socket, PostComponent, post: post %>
+        <%= live_component @socket, PostComponent, id: post.id, post: post, current_user: @current_user %>
       <% end %>
     </div>
 
@@ -49,19 +49,12 @@ defmodule WatwitterWeb.TimelineLive do
     {:noreply, socket}
   end
 
-  def handle_event("like", %{"post_id" => post_id}, socket) do
-    current_user = socket.assigns.current_user
-
-    updated_post =
-      post_id
-      |> Timeline.get_post!()
-      |> Timeline.like_post!(current_user)
-
+  def handle_info({:post_updated, %{id: id} = updated_post}, socket) do
     socket =
       socket
       |> update(:posts, fn posts ->
         Enum.map(posts, fn
-          %{id: id} when id == updated_post.id -> updated_post
+          %{id: ^id} -> updated_post
           post -> post
         end)
       end)

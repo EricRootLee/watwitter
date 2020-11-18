@@ -1,6 +1,7 @@
 defmodule WatwitterWeb.PostComponent do
   use WatwitterWeb, :live_component
 
+  alias Watwitter.Timeline
   alias WatwitterWeb.DateHelpers
   alias WatwitterWeb.SVGHelpers
 
@@ -30,7 +31,7 @@ defmodule WatwitterWeb.PostComponent do
         </div>
 
         <div class="post-actions">
-          <a class="post-action" href="#" phx-click="like" phx-value-post_id="<%= @post.id %>" data-role="like-button">
+          <a class="post-action" href="#" phx-click="like" phx-target="<%= @myself %>" data-role="like-button">
             <%= SVGHelpers.like_svg() %>
             <span data-role="like-count" class="post-action-count"><%= @post.likes_count %></span>
           </a>
@@ -38,5 +39,15 @@ defmodule WatwitterWeb.PostComponent do
       </div>
     </div>
     """
+  end
+
+  def handle_event("like", _, socket) do
+    post = socket.assigns.post
+    current_user = socket.assigns.current_user
+    updated_post = Timeline.like_post!(post, current_user)
+
+    send(self(), {:post_updated, updated_post})
+
+    {:noreply, socket}
   end
 end

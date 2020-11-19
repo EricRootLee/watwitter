@@ -6,12 +6,23 @@ defmodule WatwitterWeb.TimelineLive do
   alias WatwitterWeb.PostComponent
   alias WatwitterWeb.SVGHelpers
 
-  def mount(_params, session, socket) do
+  def mount(params, session, socket) do
     if connected?(socket), do: Timeline.subscribe()
     current_user = Accounts.get_user_by_session_token(session["user_token"])
-    posts = Timeline.list_posts()
+    page = 1
+    per_page = String.to_integer(params["per_page"] || "10")
+    posts = Timeline.list_posts(page: page, per_page: per_page)
 
-    {:ok, assign(socket, posts: posts, new_posts_count: 0, current_user: current_user)}
+    {
+      :ok,
+      assign(socket,
+        page: page,
+        per_page: per_page,
+        posts: posts,
+        new_posts_count: 0,
+        current_user: current_user
+      )
+    }
   end
 
   def render(assigns) do
@@ -30,6 +41,10 @@ defmodule WatwitterWeb.TimelineLive do
       <%= for post <- @posts do %>
         <%= live_component @socket, PostComponent, id: post.id, post: post, current_user: @current_user %>
       <% end %>
+
+      <div class="load-more-placeholder" id="load-more" phx-hook="InfiniteScroll">
+        Loading ...
+      </div>
     </div>
 
     <div class="new-post-button">
@@ -37,6 +52,12 @@ defmodule WatwitterWeb.TimelineLive do
         <%= SVGHelpers.compose_svg() %>
       <% end %>
     </div>
+
+    <footer class="footer">
+      <div class="footer-items">
+        <%= SVGHelpers.home_svg() %>
+      </div>
+    </footer>
     """
   end
 
@@ -45,6 +66,15 @@ defmodule WatwitterWeb.TimelineLive do
       socket
       |> assign(new_posts_count: 0, posts: Timeline.list_posts())
       |> set_page_title()
+
+    {:noreply, socket}
+  end
+
+  def handle_event("load-more", _, socket) do
+    socket =
+      socket
+      |> update(:page, fn page -> page + 1 end)
+      |> fetch_posts()
 
     {:noreply, socket}
   end
@@ -69,6 +99,15 @@ defmodule WatwitterWeb.TimelineLive do
       |> set_page_title()
 
     {:noreply, socket}
+  end
+
+  defp fetch_posts(socket) do
+    page = socket.assigns.page
+    per_page = socket.assigns.per_page
+    posts = Timeline.list_posts(page: page, per_page: per_page)
+
+    socket
+    |> update(:posts, fn existing -> existing ++ posts end)
   end
 
   defp set_page_title(socket) do

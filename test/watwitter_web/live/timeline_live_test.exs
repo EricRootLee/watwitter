@@ -94,6 +94,18 @@ defmodule WatwitterWeb.TimelineLiveTest do
     assert has_element?(view, like_count(post), "1")
   end
 
+  test "user can see older posts via infinite scroll", %{conn: conn} do
+    [oldest, newest] = insert_pair(:post)
+    {:ok, view, _html} = live(conn, "/?per_page=1")
+
+    view
+    |> element("#load-more", "Loading ...")
+    |> render_hook("load-more")
+
+    assert has_element?(view, post_card(newest))
+    assert has_element?(view, post_card(oldest))
+  end
+
   defp like_button(post), do: post_card(post) <> " [data-role='like-button']"
   defp like_count(post), do: post_card(post) <> " [data-role='like-count']"
 

@@ -6,7 +6,7 @@ defmodule Watwitter.Factory do
 
   def post_factory do
     %Post{
-      body: "This is a watweet",
+      body: sequence("This is a watweet"),
       user: build(:user),
       likes: []
     }

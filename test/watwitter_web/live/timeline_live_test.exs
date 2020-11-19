@@ -69,18 +69,23 @@ defmodule WatwitterWeb.TimelineLiveTest do
   end
 
   test "user can see new posts when clicking on notification of new post", %{conn: conn} do
+    previous_post = insert(:post)
     {:ok, view, _html} = live(conn, "/")
 
     post = insert(:post)
     Watwitter.Timeline.broadcast_post_creation(post)
 
-    view
-    |> element(new_posts_notice())
-    |> render_click()
+    {:ok, view, html} =
+      view
+      |> element(new_posts_notice())
+      |> render_click()
+      |> follow_redirect(conn, "/")
 
-    assert has_element?(view, post_card(post))
+    [top_card, bottom_card] = all_post_cards(html)
+    assert element_text(top_card) =~ post.body
+    assert element_text(bottom_card) =~ previous_post.body
     refute has_element?(view, new_posts_notice())
-    refute page_title(view) =~ "(1)"
+    refute page_title(view)
   end
 
   test "user can like a post", %{conn: conn} do
@@ -105,6 +110,14 @@ defmodule WatwitterWeb.TimelineLiveTest do
     assert has_element?(view, post_card(newest))
     assert has_element?(view, post_card(oldest))
   end
+
+  defp all_post_cards(html) do
+    html
+    |> Floki.parse_document!()
+    |> Floki.find(".post")
+  end
+
+  defp element_text(el), do: Floki.text(el)
 
   defp like_button(post), do: post_card(post) <> " [data-role='like-button']"
   defp like_count(post), do: post_card(post) <> " [data-role='like-count']"

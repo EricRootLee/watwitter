@@ -21,7 +21,8 @@ defmodule WatwitterWeb.TimelineLive do
         posts: posts,
         new_posts_count: 0,
         current_user: current_user
-      )
+      ),
+      temporary_assigns: [posts: []]
     }
   end
 
@@ -38,9 +39,12 @@ defmodule WatwitterWeb.TimelineLive do
           <%= ngettext("Show 1 post", "Show %{count} posts", @new_posts_count) %>
         </div>
       <% end %>
-      <%= for post <- @posts do %>
-        <%= live_component @socket, PostComponent, id: post.id, post: post, current_user: @current_user %>
-      <% end %>
+
+      <div id="posts" phx-update="append">
+        <%= for post <- @posts do %>
+          <%= live_component @socket, PostComponent, id: post.id, post: post, current_user: @current_user %>
+        <% end %>
+      </div>
 
       <div class="load-more-placeholder" id="load-more" phx-hook="InfiniteScroll">
         Loading ...
@@ -62,10 +66,7 @@ defmodule WatwitterWeb.TimelineLive do
   end
 
   def handle_event("show-new-posts", _, socket) do
-    socket =
-      socket
-      |> assign(new_posts_count: 0, posts: Timeline.list_posts())
-      |> set_page_title()
+    socket = push_redirect(socket, to: Routes.timeline_path(socket, :index))
 
     {:noreply, socket}
   end
@@ -79,15 +80,10 @@ defmodule WatwitterWeb.TimelineLive do
     {:noreply, socket}
   end
 
-  def handle_info({:post_updated, %{id: id} = updated_post}, socket) do
+  def handle_info({:post_updated, post}, socket) do
     socket =
       socket
-      |> update(:posts, fn posts ->
-        Enum.map(posts, fn
-          %{id: ^id} -> updated_post
-          post -> post
-        end)
-      end)
+      |> update(:posts, fn posts -> [post | posts] end)
 
     {:noreply, socket}
   end

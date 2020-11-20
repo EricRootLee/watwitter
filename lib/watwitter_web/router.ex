@@ -19,8 +19,6 @@ defmodule WatwitterWeb.Router do
 
   scope "/", WatwitterWeb do
     pipe_through [:browser, :require_authenticated_user]
-
-    live "/", PageLive, :index
   end
 
   # Other scopes may use custom stacks.

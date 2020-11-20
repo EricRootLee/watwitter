@@ -4,7 +4,16 @@ defmodule WatwitterWeb.TimelineLiveTest do
   import Phoenix.LiveViewTest
   import Watwitter.Factory
 
+  import Mox
+
+  setup :verify_on_exit!
   setup :register_and_log_in_user
+
+  setup do
+    Mox.stub_with(FakeTimer, ImmediateTimer)
+
+    :ok
+  end
 
   test "renders home page", %{conn: conn} do
     {:ok, view, html} = live(conn, "/")
@@ -40,5 +49,59 @@ defmodule WatwitterWeb.TimelineLiveTest do
       |> follow_redirect(conn, Routes.compose_path(conn, :new))
 
     assert html =~ "Compose"
+  end
+
+  test "LiveView checks for new messages periodically (waiting approach)", %{conn: conn} do
+    # user real timer (as if we weren't using Mox)
+    Mox.stub_with(FakeTimer, Watwitter.Timer.Impl)
+
+    {:ok, view, _html} = live(conn, "/")
+
+    render(view)
+
+    refute has_element?(view, ".new-posts-notice")
+
+    insert(:post)
+
+    Process.sleep(1000)
+
+    assert has_element?(view, ".new-posts-notice", "1")
+  end
+
+  test "LiveView checks for new messages periodically (test is quasi-timer)", %{conn: conn} do
+    # user real timer (as if we weren't using Mox)
+    Mox.stub_with(FakeTimer, Watwitter.Timer.Impl)
+    {:ok, view, _html} = live(conn, "/")
+
+    render(view)
+
+    refute has_element?(view, ".new-posts-notice")
+
+    insert(:post)
+
+    send(view.pid, :check_new_posts)
+
+    assert has_element?(view, ".new-posts-notice", "1")
+  end
+
+  test "LiveView establishes a timer", %{conn: conn} do
+    Application.put_env(:watwitter, :timeline_timer, FakeTimer)
+    test_pid = self()
+
+    FakeTimer
+    |> expect(:send_interval, fn 1000, _pid, message_to_send ->
+      send(test_pid, {:timer_requested, message_to_send})
+      :ok
+    end)
+
+    {:ok, view, _html} = live(conn, "/")
+    assert_receive {:timer_requested, message_to_send}
+    refute has_element?(view, ".new-posts-notice")
+
+    ## Test the post notice
+    insert(:post)
+    send(view.pid, message_to_send)
+
+    assert has_element?(view, ".new-posts-notice", "1")
   end
 end

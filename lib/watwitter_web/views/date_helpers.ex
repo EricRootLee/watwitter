@@ -1,4 +1,8 @@
 defmodule WatwitterWeb.DateHelpers do
+  def format_short(%{month: month, day: day}) do
+    "#{format_month(month)} #{day}"
+  end
+
   def format_month(1), do: "Jan"
   def format_month(2), do: "Feb"
   def format_month(3), do: "Mar"

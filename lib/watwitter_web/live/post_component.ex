@@ -28,7 +28,9 @@ defmodule WatwitterWeb.PostComponent do
         </div>
 
         <div class="post-body">
-          <%= @post.body %>
+          <%= live_patch to: Routes.timeline_path(@socket, :index, post_id: @post.id), data: [role: "show-post"] do %>
+            <%= @post.body %>
+          <% end %>
         </div>
 
         <div class="post-actions">

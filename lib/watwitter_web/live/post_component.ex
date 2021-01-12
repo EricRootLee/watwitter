@@ -31,6 +31,13 @@ defmodule WatwitterWeb.PostComponent do
         </div>
 
         <div class="post-actions">
+          <a class="post-action" href="#">
+            <%= SVGHelpers.reply_svg() %>
+          </a>
+          <a class="post-action" href="#">
+            <%= SVGHelpers.repost_svg() %>
+            <span class="post-action-count"><%= @post.reposts_count %></span>
+          </a>
           <%= if current_user_liked?(assigns) do %>
             <a class="post-action post-liked" href="#" phx-click="like" phx-target="<%= @myself %>" data-role="like-button">
               <%= SVGHelpers.liked_svg() %>
@@ -42,6 +49,9 @@ defmodule WatwitterWeb.PostComponent do
               <span data-role="like-count" class="post-action-count"><%= @post.likes_count %></span>
             </a>
           <% end %>
+          <a class="post-action" href="#">
+            <%= SVGHelpers.export_svg() %>
+          </a>
         </div>
       </div>
     </div>
